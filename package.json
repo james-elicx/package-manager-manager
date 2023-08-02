@@ -1,0 +1,55 @@
+{
+	"name": "package-manager-manager",
+	"version": "0.0.0",
+	"description": "Utilities for managing package managers.",
+	"license": "MIT",
+	"author": "Dario, James",
+	"type": "module",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"publishConfig": {
+		"directory": "dist"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/james-elicx/package-manager-manager"
+	},
+	"bugs": {
+		"url": "https://github.com/james-elicx/package-manager-manager/issues"
+	},
+	"homepage": "https://github.com/james-elicx/package-manager-manager#readme",
+	"scripts": {
+		"build": "vite build && node ./scripts/build.js",
+		"build:watch": "pnpm run build --watch",
+		"lint": "eslint \"./**/*.{cjs,js,jsx,ts,tsx}\"",
+		"prettier": "prettier --ignore-unknown --ignore-path=.gitignore --check .",
+		"prettier:fix": "prettier --ignore-unknown --ignore-path=.gitignore --write .",
+		"tsc": "tsc --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"alter-version": "node ./scripts/alter-version.js",
+		"release": "changeset publish"
+	},
+	"devDependencies": {
+		"@changesets/cli": "^2.26.2",
+		"@tsconfig/strictest": "^2.0.1",
+		"@types/node": "^20.3.3",
+		"eslint": "^8.41.0",
+		"eslint-config-ixn": "^1.4.2",
+		"prettier": "^2.8.8",
+		"typescript": "^5.0.4",
+		"vite": "^4.3.5",
+		"vite-plugin-dts": "^2.3.0",
+		"vite-plugin-externalize-deps": "^0.6.0",
+		"vitest": "^0.31.0"
+	},
+	"dependencies": {
+		"js-yaml": "^4.1.0"
+	}
+}
