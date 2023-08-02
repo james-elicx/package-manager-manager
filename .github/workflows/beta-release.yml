@@ -1,0 +1,45 @@
+name: Beta Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    name: Beta Release
+    if: ${{ github.repository_owner == 'james-elicx' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Set outputs
+        id: hash
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Alter version
+        run: pnpm alter-version ${{ steps.hash.outputs.sha_short }} BETA
+
+      - name: Build
+        run: pnpm build
+
+      - name: Set publishing config
+        run: pnpm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm
+        run: pnpm publish --tag beta --no-git-checks
