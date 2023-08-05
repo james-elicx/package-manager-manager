@@ -5,7 +5,7 @@ export const lockFiles = {
 	bun: 'bun.lockb',
 } as const;
 
-const lockFileNames = Object.values(lockFiles);
+const lockFilenames = Object.values(lockFiles);
 
 /**
  * Checks if the given filename is a lock file (for any package manager)
@@ -14,5 +14,5 @@ const lockFileNames = Object.values(lockFiles);
  * @returns true if the given filename is that of a lock file, false otherwise
  */
 export function isLockFile(filename: string): boolean {
-	return lockFileNames.includes(filename as (typeof lockFileNames)[number]);
+	return lockFilenames.includes(filename as (typeof lockFilenames)[number]);
 }

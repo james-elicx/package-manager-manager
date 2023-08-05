@@ -2,9 +2,7 @@
 	"parserOptions": {
 		"project": "./tsconfig.json"
 	},
-	"plugins": [
-		"unicorn"
-	],
+	"plugins": ["unicorn"],
 	"extends": ["ixn"],
 	"rules": {
 		"no-restricted-syntax": "off",
