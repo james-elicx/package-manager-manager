@@ -17,9 +17,9 @@ type ProjectRootDirInfo = {
  * until it finds a directory containing a `package.json` and a lock file
  *
  * @param path the path to start the search from (defaults to the current working directory)
- * @returns {Promise<ProjectRootDirInfo>}
+ * @returns information about the root directory, null if no project root directory could be found
  */
-export async function getProjectRootDir(path = cwd()): Promise<ProjectRootDirInfo> {
+export async function getProjectRootDir(path = cwd()): Promise<ProjectRootDirInfo | null> {
 	const files = await readdir(path);
 
 	const hasPackageJson = files.includes('package.json');
@@ -38,5 +38,5 @@ export async function getProjectRootDir(path = cwd()): Promise<ProjectRootDirInf
 		return getProjectRootDir(parentDir);
 	}
 
-	throw new Error('failed to determine project root directory');
+	return null;
 }
