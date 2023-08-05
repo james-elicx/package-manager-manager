@@ -18,5 +18,5 @@ export async function getPackageManager(): Promise<PackageManager> {
 		}
 	}
 
-	throw new Error('no package manager detected ' + projectRootFiles);
+	throw new Error('no package manager detected');
 }
