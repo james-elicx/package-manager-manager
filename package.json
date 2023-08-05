@@ -42,7 +42,7 @@
 		"@types/mock-fs": "^4.13.1",
 		"@types/node": "^20.3.3",
 		"eslint": "^8.44.0",
-		"eslint-config-ixn": "^1.4.2",
+		"eslint-config-ixn": "^1.4.5",
 		"eslint-plugin-unicorn": "^48.0.1",
 		"mock-fs": "^5.2.0",
 		"prettier": "^3.0.0",
@@ -54,5 +54,8 @@
 	},
 	"dependencies": {
 		"js-yaml": "^4.1.0"
+	},
+	"resolutions": {
+		"eslint-plugin-prettier": "^5.0.0"
 	}
 }
