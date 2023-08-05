@@ -2,8 +2,11 @@
 	"parserOptions": {
 		"project": "./tsconfig.json"
 	},
+	"plugins": ["unicorn"],
 	"extends": ["ixn"],
 	"rules": {
+		"prettier/prettier": "off",
+
 		"no-restricted-syntax": "off",
 		"no-await-in-loop": "off",
 
@@ -13,7 +16,9 @@
 		],
 
 		"no-console": "error",
-		"no-underscore-dangle": "off"
+		"no-underscore-dangle": "off",
+
+		"unicorn/prefer-node-protocol": "error"
 	},
 	"ignorePatterns": ["dist", "scripts"]
 }
