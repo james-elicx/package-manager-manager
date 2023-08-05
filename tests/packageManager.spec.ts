@@ -5,7 +5,7 @@ import { suite, test, expect, afterEach } from 'vitest';
 suite('PackageManager name', () => {
 	afterEach(() => mockFs.restore());
 
-	test.only('null is returned in case no package manager could be detected (because no lock file could be detected)', async () => {
+	test('null is returned in case no package manager could be detected (because no lock file could be detected)', async () => {
 		mockFs({
 			'package.json': '',
 		});
