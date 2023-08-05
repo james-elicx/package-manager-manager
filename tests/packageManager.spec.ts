@@ -9,6 +9,6 @@ suite('PackageManager name', () => {
     mockFs({
       'package.json': '',
     });
-    expect(() => getPackageManager()).rejects.toThrowError('no package manager detected');
+    expect(() => getPackageManager()).rejects.toThrowError('failed to determine project root directory');
   });
 });
