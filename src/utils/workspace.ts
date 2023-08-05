@@ -1,6 +1,7 @@
 import { readdir } from "fs/promises";
 import { join, resolve } from "path";
 import { cwd } from "process";
+import { isLockFile } from "./locks";
 
 type ProjectRootDirInfo = {
   path: string,
@@ -17,9 +18,7 @@ export async function getProjectRootDir(path = cwd()): Promise<ProjectRootDirInf
 
   const hasPackageJson = files.includes('package.json');
 
-  const hasLockFile = files.some(file => 
-      ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lockb'].includes(file)
-  );
+  const hasLockFile = files.some(isLockFile);
 
   if (hasPackageJson && hasLockFile) {
     return {
