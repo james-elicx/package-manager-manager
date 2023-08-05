@@ -15,7 +15,7 @@ suite('PackageManager name', () => {
 				'package-lock.json': '',
 			});
 			const packageManager = await getPackageManager();
-			expect(packageManager.name).toEqual('npm');
+			expect(packageManager?.name).toEqual('npm');
 		});
 
 		test('yarn detection', async () => {
@@ -24,7 +24,7 @@ suite('PackageManager name', () => {
 				'yarn.lock': '',
 			});
 			const packageManager = await getPackageManager();
-			expect(packageManager.name).toEqual('yarn');
+			expect(packageManager?.name).toEqual('yarn');
 		});
 
 		test('pnpm detection', async () => {
@@ -33,7 +33,7 @@ suite('PackageManager name', () => {
 				'pnpm-lock.yaml': '',
 			});
 			const packageManager = await getPackageManager();
-			expect(packageManager.name).toEqual('pnpm');
+			expect(packageManager?.name).toEqual('pnpm');
 		});
 
 		test('bun detection', async () => {
@@ -42,7 +42,7 @@ suite('PackageManager name', () => {
 				'bun.lockb': '',
 			});
 			const packageManager = await getPackageManager();
-			expect(packageManager.name).toEqual('bun');
+			expect(packageManager?.name).toEqual('bun');
 		});
 	});
 
@@ -56,7 +56,7 @@ suite('PackageManager name', () => {
 			await writeFile('../../package.json', '');
 			await writeFile('../../package-lock.json', '');
 			const packageManager = await getPackageManager();
-			expect(packageManager.name).toEqual('npm');
+			expect(packageManager?.name).toEqual('npm');
 		});
 
 		test('yarn detection', async () => {
@@ -66,7 +66,7 @@ suite('PackageManager name', () => {
 			await writeFile('../../package.json', '');
 			await writeFile('../../yarn.lock', '');
 			const packageManager = await getPackageManager();
-			expect(packageManager.name).toEqual('yarn');
+			expect(packageManager?.name).toEqual('yarn');
 		});
 
 		test('pnpm detection', async () => {
@@ -76,7 +76,7 @@ suite('PackageManager name', () => {
 			await writeFile('../../package.json', '');
 			await writeFile('../../pnpm-lock.yaml', '');
 			const packageManager = await getPackageManager();
-			expect(packageManager.name).toEqual('pnpm');
+			expect(packageManager?.name).toEqual('pnpm');
 		});
 
 		test('bun detection', async () => {
@@ -86,7 +86,7 @@ suite('PackageManager name', () => {
 			await writeFile('../../package.json', '');
 			await writeFile('../../bun.lockb', '');
 			const packageManager = await getPackageManager();
-			expect(packageManager.name).toEqual('bun');
+			expect(packageManager?.name).toEqual('bun');
 		});
 	});
 });
