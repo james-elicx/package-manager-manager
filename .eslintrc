@@ -5,6 +5,8 @@
 	"plugins": ["unicorn"],
 	"extends": ["ixn"],
 	"rules": {
+		"prettier/prettier": "off",
+
 		"no-restricted-syntax": "off",
 		"no-await-in-loop": "off",
 
