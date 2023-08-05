@@ -1,4 +1,4 @@
-import { writeFile } from 'fs/promises';
+import { writeFile } from 'node:fs/promises';
 import mockFs from 'mock-fs';
 import { getPackageManager } from 'src/packageManager';
 import { suite, test, expect, describe, afterEach } from 'vitest';

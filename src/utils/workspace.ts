@@ -1,6 +1,6 @@
-import { readdir } from 'fs/promises';
-import { join, resolve } from 'path';
-import { cwd } from 'process';
+import { readdir } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { cwd } from 'node:process';
 import { isLockFile } from './locks';
 
 type ProjectRootDirInfo = {
