@@ -9,9 +9,15 @@ type ProjectRootDirInfo = {
 };
 
 /**
- * Gets the project's root directory
- * in case of standard/simple setups this is the project directory
- * in case of workspaces/monorepos the very root of it
+ * Gets the project's root directory which is:
+ *  - in case of standard/simple setups the project directory
+ *  - in case of workspaces/monorepos the root of it
+ *
+ * It does so by checking the current path and potentially traversing up the directory tree
+ * until it finds a directory containing a `package.json` and a lock file
+ *
+ * @param path the path to start the search from (defaults to the current working directory)
+ * @returns {Promise<ProjectRootDirInfo>}
  */
 export async function getProjectRootDir(path = cwd()): Promise<ProjectRootDirInfo> {
 	const files = await readdir(path);

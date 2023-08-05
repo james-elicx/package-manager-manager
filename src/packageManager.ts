@@ -6,6 +6,13 @@ type PackageManager = {
 	name: PackageManagerName;
 };
 
+/**
+ * Gets the current package manager information based on the current directory
+ *
+ * Note: this function throws in case no package manager could be detected
+ *
+ * @returns the current package manager information
+ */
 export async function getPackageManager(): Promise<PackageManager> {
 	const { files: projectRootFiles } = await getProjectRootDir();
 
