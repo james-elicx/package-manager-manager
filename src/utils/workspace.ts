@@ -22,7 +22,7 @@ export async function getProjectRootDir(path = cwd()): Promise<ProjectRootDirInf
 
 	if (hasPackageJson && hasLockFile) {
 		return {
-			path: path,
+			path,
 			files: await readdir(path),
 		};
 	}

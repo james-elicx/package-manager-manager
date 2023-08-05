@@ -1,6 +1,6 @@
+import mockFs from 'mock-fs';
 import { getPackageManager } from 'src/packageManager';
 import { suite, test, expect, afterEach } from 'vitest';
-import mockFs from 'mock-fs';
 
 suite('PackageManager name', () => {
 	afterEach(() => mockFs.restore());

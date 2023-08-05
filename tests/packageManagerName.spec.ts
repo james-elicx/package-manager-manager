@@ -1,7 +1,7 @@
+import { writeFile } from 'fs/promises';
+import mockFs from 'mock-fs';
 import { getPackageManager } from 'src/packageManager';
 import { suite, test, expect, describe, afterEach } from 'vitest';
-import mockFs from 'mock-fs';
-import { writeFile } from 'fs/promises';
 
 suite('PackageManager name', () => {
 	afterEach(() => mockFs.restore());
