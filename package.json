@@ -53,6 +53,7 @@
 		"vitest": "^0.31.0"
 	},
 	"dependencies": {
-		"js-yaml": "^4.1.0"
+		"js-yaml": "^4.1.0",
+		"shellac": "^0.8.0"
 	}
 }
