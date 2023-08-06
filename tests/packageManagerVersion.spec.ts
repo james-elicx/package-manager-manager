@@ -50,7 +50,7 @@ vi.mock('shellac', () => {
 	return shellacMock;
 });
 
-suite.only('PackageManager version', () => {
+suite('PackageManager version', () => {
 	const { shellacMock } = globalThis;
 
 	beforeEach(() => {
@@ -59,7 +59,7 @@ suite.only('PackageManager version', () => {
 
 	afterEach(() => mockFs.restore());
 
-	test.only('npm detection', async () => {
+	test('npm detection', async () => {
 		mockFs({
 			'package.json': '',
 			'package-lock.json': '',
