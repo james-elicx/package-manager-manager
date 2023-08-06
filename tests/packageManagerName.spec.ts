@@ -4,7 +4,7 @@ import { getPackageManager } from 'src/packageManager';
 import { vi, suite, test, expect, describe, afterEach } from 'vitest';
 
 vi.mock('shellac', () => ({
-	default: () => ({ stdout: '', stderr: '' })
+	default: () => ({ stdout: '', stderr: '' }),
 }));
 
 suite('PackageManager name', () => {
