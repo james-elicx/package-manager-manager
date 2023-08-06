@@ -35,8 +35,8 @@ vi.mock('shellac', () => {
 			commandLiteral: TemplateStringsArray,
 			...literalArgs: string[]
 		): Promise<{ stdout: string; stderr: string }> {
-			const command = literalArgs.reduce((finalString, value, index) => {
-				return `${finalString}${value}${commandLiteral[index + 1]}`;
+			const command = literalArgs.reduce((acc, value, index) => {
+				return `${acc}${value}${commandLiteral[index + 1]}`;
 			}, commandLiteral[0]);
 
 			const mockResult = handlersMap.get(command ?? '');
