@@ -1,7 +1,11 @@
 import { writeFile } from 'node:fs/promises';
 import mockFs from 'mock-fs';
 import { getPackageManager } from 'src/packageManager';
-import { suite, test, expect, describe, afterEach } from 'vitest';
+import { vi, suite, test, expect, describe, afterEach } from 'vitest';
+
+vi.mock('shellac', () => ({
+	default: () => ({ stdout: '', stderr: '' }),
+}));
 
 suite('PackageManager name', () => {
 	afterEach(() => mockFs.restore());
