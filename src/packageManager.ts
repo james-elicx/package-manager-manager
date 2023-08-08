@@ -3,8 +3,13 @@ import { getProjectRootDir, lockFiles } from './utils';
 
 type PackageManagerName = 'npm' | 'yarn' | 'pnpm' | 'bun';
 
+/**
+ * Object containing all the information and utilities regarding the current package manager
+ */
 type PackageManager = {
+	/** The name of the package manager (one of 'npm', 'yarn', 'pnpm' or 'bun') */
 	name: PackageManagerName;
+	/** The version of the package manager */
 	version: string;
 };
 
