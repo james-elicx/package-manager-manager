@@ -50,13 +50,6 @@ jobs:
             You can install this latest build in your project with:
 
             ```sh
-            npm install --save-dev https://prerelease-registry.ixion-labs.workers.dev/james-elicx/package-manager-manager/runs/${{ env.WORKFLOW_RUN_ID }}/npm-package-package-manager-manager-${{ env.WORKFLOW_RUN_PR }}
+              npm i https://pmm-prereleases.ixion-labs.workers.dev/${{ env.WORKFLOW_RUN_ID }}/${{ env.WORKFLOW_RUN_PR }}
             ```
-
-            Or you can immediately run this with `npx`:
-
-            ```sh
-            npx https://prerelease-registry.ixion-labs.workers.dev/james-elicx/package-manager-manager/runs/${{ env.WORKFLOW_RUN_ID }}/npm-package-package-manager-manager-${{ env.WORKFLOW_RUN_PR }}
-            ```
-
             </details>
