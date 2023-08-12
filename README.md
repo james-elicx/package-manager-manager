@@ -17,7 +17,7 @@
 
 ---
 
-__package-manager-manager__ is a library aimed at providing information regarding the package manager currently being used in a given project.
+**package-manager-manager** is a library aimed at providing information regarding the package manager currently being used in a given project.
 
 It can be used in CLIs or similar projects which may at some point need to know and adapt their behavior based on the package manager currently used by the developer (e.g. A project scaffolding tool, a bundling too, etc...).
 
@@ -28,12 +28,12 @@ To use the library first install it in your project, via:
 ```sh
 npm i package-manager-manager
 ```
+
 (or your package manager's equivalent)
 
 Then simply import and use the `getPackageManager()` to get an object containing all the information you need regarding the package manager currently being used:
 
 ```js
-
 const packageManager = await getPackageManager();
 
 console.log(packageManager.name);
@@ -41,7 +41,6 @@ console.log(packageManager.name);
 
 console.log(packageManager.version);
 // logs the version of the package manager e.g. '8.11.0'
-
 ```
 
 > **Note**
