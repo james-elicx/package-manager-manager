@@ -1,1 +1,1 @@
-export * from './utils';
+export { getPackageManager } from './packageManager';
