@@ -8,9 +8,7 @@ body:
       value: |
         Thank you for taking the time to report a bug with this library.
 
-        Before you submit an issue, please ensure that you have done the following.
-          - Read the [documentation](https://github.com/james-elicx/package-manager-manager/tree/main/docs).
-          - Searched for existing issues.
+        Before you submit an issue, please ensure that you have searched for it in the existing issues.
 
         To help us address your issue as quickly as possible, please fill out the following information.
 
