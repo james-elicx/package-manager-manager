@@ -19,7 +19,7 @@
 
 **package-manager-manager** is a library aimed at providing information regarding the package manager currently being used in a given project.
 
-It can be used in CLIs or similar projects which may at some point need to know and adapt their behavior based on the package manager currently used by the developer (e.g. A project scaffolding tool, a bundling too, etc...).
+It can be used in CLIs or similar projects which may at some point need to know and adapt their behavior based on the package manager currently used by the developer (e.g. A project scaffolding tool, a bundling tool, etc...).
 
 ## Usage
 
@@ -31,7 +31,7 @@ npm i package-manager-manager
 
 (or your package manager's equivalent)
 
-Then simply import and use the `getPackageManager()` to get an object containing all the information you need regarding the package manager currently being used:
+Then simply import and use the `getPackageManager()` function to get an object containing all the information you need regarding the package manager currently being used:
 
 ```js
 const packageManager = await getPackageManager();
