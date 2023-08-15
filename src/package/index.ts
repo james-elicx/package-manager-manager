@@ -1,7 +1,8 @@
 import type { PackageManager } from '../packageManager';
 
 import { getBunGetPackageInfoFunction } from './bun';
-import { getNpmOrPnpmGetPackageInfoFunction } from './npmAndPnpm';
+import { getNpmGetPackageInfoFunction } from './npm';
+import { getPnpmGetPackageInfoFunction } from './pnpm';
 import { getYarnGetPackageInfoFunction } from './yarn';
 
 type PackageInfo = {
@@ -24,8 +25,9 @@ export function getPackageInfoFunction(
 ): GetPackageInfo {
 	switch (packageManager.name) {
 		case 'npm':
+			return getNpmGetPackageInfoFunction();
 		case 'pnpm':
-			return getNpmOrPnpmGetPackageInfoFunction(packageManager.name);
+			return getPnpmGetPackageInfoFunction();
 		case 'yarn':
 			return getYarnGetPackageInfoFunction(packageManager.version);
 		case 'bun':
