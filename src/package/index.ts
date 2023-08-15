@@ -14,7 +14,7 @@ type PackageInfo = {
 export type GetPackageInfo = (packageName: string) => Promise<PackageInfo | null>;
 
 /**
- * Given a package manager returns  the getPackageInfo for it
+ * Given a package manager, returns the getPackageInfo function for it
  *
  * @param packageManager the name and version of the package manager
  * @returns the getPackageInfo function for the package manager

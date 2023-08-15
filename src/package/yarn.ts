@@ -55,10 +55,7 @@ export function getYarnGetPackageInfoFunction(yarnVersion: string) {
 				return null;
 			}
 
-			return {
-				name,
-				version,
-			};
+			return { name, version };
 		} catch {
 			throw new Error(`An error occurred while gathering the package info of "${name}"`);
 		}
