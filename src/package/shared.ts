@@ -28,10 +28,7 @@ export function getNpmOrPnpmGetPackageInfoFunction(
 				return null;
 			}
 
-			return {
-				name,
-				version: packageInfo.version,
-			};
+			return { name, version: packageInfo.version };
 		} catch {
 			throw new Error(`An error occurred while gathering the package info of "${name}"`);
 		}
