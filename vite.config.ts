@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { readdirSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, copyFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -42,5 +42,18 @@ export default defineConfig({
 			entryRoot: 'src',
 			outputDir: 'dist',
 		}),
+		{
+			name: 'post-build-script',
+			closeBundle: async () => {
+				// Strip dist from package.json exports
+				const packageJson = readFileSync(resolve('package.json'), 'utf-8');
+				const withoutDist = packageJson.replace(/dist\//g, '');
+				writeFileSync(resolve('dist', 'package.json'), withoutDist);
+
+				// Copy README and LICENSE
+				copyFileSync(resolve('README.md'), resolve('dist', 'README.md'));
+				copyFileSync(resolve('LICENSE.md'), resolve('dist', 'LICENSE.md'));
+			},
+		},
 	],
 });

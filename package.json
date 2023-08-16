@@ -32,7 +32,7 @@
 	},
 	"homepage": "https://github.com/james-elicx/package-manager-manager#readme",
 	"scripts": {
-		"build": "vite build && node ./scripts/build.js",
+		"build": "vite build",
 		"build:watch": "pnpm run build --watch",
 		"lint": "eslint \"./**/*.{cjs,js,jsx,ts,tsx}\"",
 		"prettier": "prettier --ignore-unknown --ignore-path .gitignore --ignore-path .prettierignore --check .",
