@@ -26,6 +26,7 @@ export type PackageManager = {
 	 *
 	 * @param script the script to run (e.g. `'start'`, `'lint'`, etc...)
 	 * @param options options Options indicating how the script should be created
+	 * @returns a string representing the command needed to run the script, or null if the provided input script is invalid
 	 */
 	getRunScript: GetRunScript;
 	/**
@@ -33,6 +34,7 @@ export type PackageManager = {
 	 *
 	 * @param script the script to run (e.g. `'start'`, `'lint'`, etc...)
 	 * @param options options Options indicating how the script should be created
+	 * @returns an object representing the command needed to run the script, or null if the provided input script is invalid
 	 */
 	getRunScriptObject: GetRunScriptObject;
 };
