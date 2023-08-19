@@ -18,11 +18,12 @@ export function getNpmOrPnpmGetPackageInfoFunction(
 ) {
 	return async (...[name]: Parameters<GetPackageInfo>): ReturnType<GetPackageInfo> => {
 		try {
-			const outputJson: NpmListOutputJson = JSON.parse(
+			const outputJson = JSON.parse(
 				(await shellac`$ ${packageManager} list --depth=0 --json`).stdout,
 			);
 
-			const packageInfo = outputJson.dependencies[name];
+			const info: NpmListOutputJson = packageManager === 'npm' ? outputJson : outputJson[0];
+			const packageInfo = info.dependencies[name];
 
 			if (!packageInfo) {
 				return null;
