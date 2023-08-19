@@ -1,7 +1,7 @@
-import { writeFile } from 'node:fs/promises';
 import mockFs from 'mock-fs';
 import { getPackageManager } from 'src/packageManager';
 import { vi, suite, test, expect, describe, afterEach } from 'vitest';
+import { setupFsForTesting } from './utils';
 
 vi.mock('shellac', () => ({
 	default: () => ({ stdout: '', stderr: '' }),
@@ -14,37 +14,25 @@ suite('PackageManager name', () => {
 		afterEach(() => mockFs.restore());
 
 		test('npm detection', async () => {
-			mockFs({
-				'package.json': '',
-				'package-lock.json': '',
-			});
+			await setupFsForTesting('npm');
 			const packageManager = await getPackageManager();
 			expect(packageManager?.name).toEqual('npm');
 		});
 
 		test('yarn detection', async () => {
-			mockFs({
-				'package.json': '',
-				'yarn.lock': '',
-			});
+			await setupFsForTesting('yarn');
 			const packageManager = await getPackageManager();
 			expect(packageManager?.name).toEqual('yarn');
 		});
 
 		test('pnpm detection', async () => {
-			mockFs({
-				'package.json': '',
-				'pnpm-lock.yaml': '',
-			});
+			await setupFsForTesting('pnpm');
 			const packageManager = await getPackageManager();
 			expect(packageManager?.name).toEqual('pnpm');
 		});
 
 		test('bun detection', async () => {
-			mockFs({
-				'package.json': '',
-				'bun.lockb': '',
-			});
+			await setupFsForTesting('bun');
 			const packageManager = await getPackageManager();
 			expect(packageManager?.name).toEqual('bun');
 		});
@@ -54,41 +42,25 @@ suite('PackageManager name', () => {
 		afterEach(() => mockFs.restore());
 
 		test('npm detection', async () => {
-			mockFs({
-				'package.json': '',
-			});
-			await writeFile('../../package.json', '');
-			await writeFile('../../package-lock.json', '');
+			await setupFsForTesting('npm', { forWorkspace: true });
 			const packageManager = await getPackageManager();
 			expect(packageManager?.name).toEqual('npm');
 		});
 
 		test('yarn detection', async () => {
-			mockFs({
-				'package.json': '',
-			});
-			await writeFile('../../package.json', '');
-			await writeFile('../../yarn.lock', '');
+			await setupFsForTesting('yarn', { forWorkspace: true });
 			const packageManager = await getPackageManager();
 			expect(packageManager?.name).toEqual('yarn');
 		});
 
 		test('pnpm detection', async () => {
-			mockFs({
-				'package.json': '',
-			});
-			await writeFile('../../package.json', '');
-			await writeFile('../../pnpm-lock.yaml', '');
+			await setupFsForTesting('pnpm', { forWorkspace: true });
 			const packageManager = await getPackageManager();
 			expect(packageManager?.name).toEqual('pnpm');
 		});
 
 		test('bun detection', async () => {
-			mockFs({
-				'package.json': '',
-			});
-			await writeFile('../../package.json', '');
-			await writeFile('../../bun.lockb', '');
+			await setupFsForTesting('bun', { forWorkspace: true });
 			const packageManager = await getPackageManager();
 			expect(packageManager?.name).toEqual('bun');
 		});

@@ -1,6 +1,7 @@
 import mockFs from 'mock-fs';
 import { getPackageManager } from 'src/packageManager';
 import { suite, test, expect, beforeEach, afterEach, vi } from 'vitest';
+import { setupFsForTesting } from './utils';
 
 type ShellacMock = {
 	addMock: (command: string, result: string | { stdout: string; stderr: string }) => void;
@@ -60,40 +61,28 @@ suite('PackageManager version', () => {
 	afterEach(() => mockFs.restore());
 
 	test('npm detection', async () => {
-		mockFs({
-			'package.json': '',
-			'package-lock.json': '',
-		});
+		await setupFsForTesting('npm');
 		shellacMock.addMock('$ npm --version', '16.16.0');
 		const packageManager = await getPackageManager();
 		expect(packageManager?.version).toEqual('16.16.0');
 	});
 
 	test('yarn detection', async () => {
-		mockFs({
-			'package.json': '',
-			'yarn.lock': '',
-		});
+		await setupFsForTesting('yarn');
 		shellacMock.addMock('$ yarn --version', '1.22.0');
 		const packageManager = await getPackageManager();
 		expect(packageManager?.version).toEqual('1.22.0');
 	});
 
 	test('pnpm detection', async () => {
-		mockFs({
-			'package.json': '',
-			'pnpm-lock.yaml': '',
-		});
+		await setupFsForTesting('pnpm');
 		shellacMock.addMock('$ pnpm --version', '7.27.0');
 		const packageManager = await getPackageManager();
 		expect(packageManager?.version).toEqual('7.27.0');
 	});
 
 	test('bun detection', async () => {
-		mockFs({
-			'package.json': '',
-			'bun.lockb': '',
-		});
+		await setupFsForTesting('bun');
 		shellacMock.addMock('$ bun --version', '0.7.3');
 		const packageManager = await getPackageManager();
 		expect(packageManager?.version).toEqual('0.7.3');
