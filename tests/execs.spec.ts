@@ -167,6 +167,12 @@ suite('Exec', () => {
 		// });
 	});
 
+	// left TODO:
+	//   - [] short vs long form, make sure both handle args correctly: https://docs.npmjs.com/cli/v8/commands/npm-exec#npx-vs-npm-exec
+	//   - [] make sure the check for package installation is correct (me might need to strip some parts of the command)
+	//   - [] make sure that versions can also be included in the commands
+	//   - [] make sure to strip orgs when needed (as for example `npx @cloudflare/next-on-pages` vs `pnpm exec next-on-pages`)
+
 	describe('getRunExec', () => {
 		afterEach(() => mockFs.restore());
 
