@@ -57,13 +57,6 @@ function getGetRunScriptObject(packageManager: PackageManagerName): GetRunScript
 	};
 }
 
-function getGetRunScript(getRunScriptObject: GetRunScriptObject): GetRunScript {
-	return (...args) => {
-		const obj = getRunScriptObject(...args);
-		return obj?.toString() ?? null;
-	};
-}
-
 export type GetRunScriptOptions = {
 	/**
 	 * The arguments to pass to the script (e.g. `-h`, `--info`, etc...)
@@ -97,7 +90,8 @@ export function getRunScriptFunctions(packageManager: PackageManagerName): {
 } {
 	const getRunScriptObject = getGetRunScriptObject(packageManager);
 
-	const getRunScript = getGetRunScript(getRunScriptObject);
+	const getRunScript = (...args: Parameters<typeof getRunScriptObject>) =>
+		getRunScriptObject(...args)?.toString() ?? null;
 
 	return { getRunScriptObject, getRunScript };
 }
