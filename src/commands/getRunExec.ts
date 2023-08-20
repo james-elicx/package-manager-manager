@@ -1,26 +1,33 @@
-import type { PackageManagerName } from 'src/packageManager';
+import type { PackageManager } from 'src/packageManager';
 import type { CommandExecStruct } from './CommandStruct';
 
 class RunExecStruct implements CommandExecStruct {
-	pmKeywords: string[];
+	structIsReady: Promise<void>;
+
+	pmKeywords: string[] = [];
 
 	args: string[];
 
 	#argsDoubleDashes = '';
 
 	constructor(
-		packageManager: PackageManagerName,
+		packageManager: Pick<PackageManager, 'name' | 'getPackageInfo'>,
 		public command: string,
 		options?: Partial<GetRunExecOptions>,
 	) {
 		this.args = options?.args ?? [];
 
-    const format = options?.format ?? 'short';
-    const download = options?.download ?? 'prefer-always';
+		const format = options?.format ?? 'short';
+		const download = options?.download ?? 'prefer-always';
 
-		this.pmKeywords = RunExecStruct.#pmKeywords(packageManager, format, download);
+		this.structIsReady = new Promise((resolve) => {
+			RunExecStruct.#getPmKeywords(packageManager, command, format, download).then((pmKeywords) => {
+				this.pmKeywords = pmKeywords;
+				resolve();
+			});
+		});
 
-		this.#argsDoubleDashes = ['npm', 'bun'].includes(packageManager) ? ' --' : '';
+		this.#argsDoubleDashes = ['npm', 'bun'].includes(packageManager.name) ? ' --' : '';
 	}
 
 	toString(): string {
@@ -29,21 +36,24 @@ class RunExecStruct implements CommandExecStruct {
 		}`;
 	}
 
-	static #pmKeywords(
-		packageManager: PackageManagerName,
-    format: 'short'|'full',
+	static async #getPmKeywords(
+		packageManager: Pick<PackageManager, 'name' | 'getPackageInfo'>,
+		command: string,
+		format: 'short' | 'full',
 		download: DownloadPreference,
-	): string[] {
-    if(packageManager === 'bun') return format === 'short' ? ['bunx'] : ['bun', 'x'];
-    if (packageManager === 'npm') return format === 'short' ? ['npx'] : ['npm', 'exec'];
+	): Promise<string[]> {
+		if (packageManager.name === 'bun') return format === 'short' ? ['bunx'] : ['bun', 'x'];
+		if (packageManager.name === 'npm') return format === 'short' ? ['npx'] : ['npm', 'exec'];
 
-    if(download === 'prefer-always') {
-      return [packageManager, 'dlx'];
-    }
-    if(download === 'prefer-never') {
-      return [packageManager, 'exec'];
-    }
-    throw new Error("TO IMPLEMENT");
+		if (download === 'prefer-always') {
+			return [packageManager.name, 'dlx'];
+		}
+		if (download === 'prefer-never') {
+			return [packageManager.name, 'exec'];
+		}
+		// NOTE: check if here we need to be more clever
+		const isPackageInstalled = await packageManager.getPackageInfo(command);
+		return [packageManager.name, isPackageInstalled ? 'exec' : 'dlx'];
 	}
 }
 
@@ -54,7 +64,7 @@ export type GetRunExecOptions = {
 	 * defaults to `[]`
 	 */
 	args: string[];
-  /**
+	/**
 	 * Wether the command represents a full command or a shortened one
 	 * (i.e. whether unnecessary keywords are removed/compressed or not)
 	 * (e.g. short format = `'npx eslint'`, long format = `'npm exec eslint'`)
@@ -62,38 +72,43 @@ export type GetRunExecOptions = {
 	 * defaults to `'short'`
 	 */
 	format: 'full' | 'short';
-  /**
-   * Indication of how the resulting command should be set up in regards of downloading
-   * missing packages (this option does not guarantee a specific behavior as this heavily
-   * relies on the underlying package manager in use)
-   *
-   * defaults to `'prefer-always'`
-   */
-  download: DownloadPreference;
+	/**
+	 * Indication of how the resulting command should be set up in regards of downloading
+	 * missing packages (this option does not guarantee a specific behavior as this heavily
+	 * relies on the underlying package manager in use)
+	 *
+	 * defaults to `'prefer-always'`
+	 */
+	download: DownloadPreference;
 };
 
-type DownloadPreference = 'prefer-never'|'prefer-always'|'prefer-if-needed';
+type DownloadPreference = 'prefer-never' | 'prefer-always' | 'prefer-if-needed';
 
 export type GetRunExec = (
 	command: string,
 	options?: Partial<GetRunExecOptions>,
-) => string | null;
+) => Promise<string | null>;
 
 export type GetRunExecStruct = (
 	command: string,
 	options?: Partial<GetRunExecOptions>,
-) => CommandExecStruct | null;
+) => Promise<CommandExecStruct | null>;
 
-export function getRunExecFunctions(packageManager: PackageManagerName): {
+export function getRunExecFunctions(
+	packageManager: Pick<PackageManager, 'name' | 'getPackageInfo'>,
+): {
 	getRunExec: GetRunExec;
 	getRunExecStruct: GetRunExecStruct;
 } {
-	const getRunExecStruct: GetRunExecStruct = (command, options) => {
+	const getRunExecStruct: GetRunExecStruct = async (command, options) => {
 		if (!command) return null;
-		return new RunExecStruct(packageManager, command, options);
+		const struct = new RunExecStruct(packageManager, command, options);
+		await struct.structIsReady;
+		return struct;
 	};
 
-	const getRunExec: GetRunExec = (...args) => getRunExecStruct(...args)?.toString() ?? null;
+	const getRunExec: GetRunExec = async (...args) =>
+		(await getRunExecStruct(...args))?.toString() ?? null;
 
 	return { getRunExec, getRunExecStruct };
 }

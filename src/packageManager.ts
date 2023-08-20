@@ -79,19 +79,23 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 		if (projectRootFiles.includes(lockFiles[packageManagerName])) {
 			const name = packageManagerName;
 			const version = await getPackageManagerVersion(packageManagerName);
-			const getPackageInfo = getPackageInfoFunction({ name, version });
-			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(name);
-			const { getRunExec, getRunExecStruct } = getRunExecFunctions(name);
-
-			return {
-				name,
+			const packageManager: Partial<PackageManager> = {
+				name: packageManagerName,
 				version,
-				getPackageInfo,
-				getRunScript,
-				getRunScriptStruct,
-				getRunExec,
-				getRunExecStruct,
 			};
+			packageManager.getPackageInfo = getPackageInfoFunction({ name, version });
+			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(name);
+			const { getRunExec, getRunExecStruct } = getRunExecFunctions(
+				packageManager as Pick<PackageManager, 'name' | 'getPackageInfo'>,
+			);
+
+			packageManager.getRunScript = getRunScript;
+			packageManager.getRunScriptStruct = getRunScriptStruct;
+
+			packageManager.getRunExec = getRunExec;
+			packageManager.getRunExecStruct = getRunExecStruct;
+
+			return packageManager as PackageManager;
 		}
 	}
 
