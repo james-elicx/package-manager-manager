@@ -1,6 +1,6 @@
 import shellac from 'shellac';
-import type { GetRunScript, GetRunScriptStruct } from './commands';
-import { getRunScriptFunctions } from './commands';
+import type { GetRunExec, GetRunExecStruct, GetRunScript, GetRunScriptStruct } from './commands';
+import { getRunExecFunctions, getRunScriptFunctions } from './commands';
 import { getPackageInfoFunction, type GetPackageInfo } from './package';
 import { getProjectRootDir, lockFiles } from './utils';
 
@@ -37,6 +37,22 @@ export type PackageManager = {
 	 * @returns an object representing the command needed to run the script, or null if the provided input script is invalid
 	 */
 	getRunScriptStruct: GetRunScriptStruct;
+	/**
+	 * Gets the command needed to run a specified command from a local or remote package
+	 *
+	 * @param command the (package) command to run (e.g. `'eslint'`, `'prettier'`, etc...)
+	 * @param options options Options indicating how the command should be created
+	 * @returns a string representing the command needed to run the package command, or null if the provided input package command is invalid
+	 */
+	getRunExec: GetRunExec;
+	/**
+	 * Gets the command needed to run a specified command from a local or remote package
+	 *
+	 * @param command the (package) command to run (e.g. `'eslint'`, `'prettier'`, etc...)
+	 * @param options options Options indicating how the command should be created
+	 * @returns a string representing the command needed to run the package command, or null if the provided input package command is invalid
+	 */
+	getRunExecStruct: GetRunExecStruct;
 };
 
 async function getPackageManagerVersion(packageManager: PackageManagerName): Promise<string> {
@@ -65,12 +81,16 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 			const version = await getPackageManagerVersion(packageManagerName);
 			const getPackageInfo = getPackageInfoFunction({ name, version });
 			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(name);
+			const { getRunExec, getRunExecStruct } = getRunExecFunctions(name);
+
 			return {
 				name,
 				version,
 				getPackageInfo,
 				getRunScript,
 				getRunScriptStruct,
+				getRunExec,
+				getRunExecStruct,
 			};
 		}
 	}
