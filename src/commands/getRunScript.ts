@@ -1,48 +1,59 @@
 import type { PackageManagerName } from 'src/packageManager';
 import type { CommandScriptObject } from './CommandObject';
 
-function shouldRunKeywordBeIncluded(
-	packageManager: PackageManagerName,
-	script: string,
-	format: GetRunScriptOptions['format'],
-): boolean {
-	if (format === 'full') return true;
+class RunScriptObject implements CommandScriptObject {
+	pmKeywords: string[];
 
-	if (script === 'start') return false;
+	args: string[];
 
-	if (packageManager === 'npm') return true;
+	#argsDoubleDashes = '';
 
-	// TODO: `run` is also necessary when scripts have the same name as package managers reserved keywords, we aren't currently
-	//       accounting for that, we should add here the proper checks for that
-	//       (e.g. `pnpm info` runs the `info` command, but `pnpm run info` runs the `info` script, but here we don't consider
-	//       that and always remove the `run` making the script command result invalid)
+	constructor(
+		packageManager: PackageManagerName,
+		public script: string,
+		options?: Partial<GetRunScriptOptions>,
+	) {
+		this.args = options?.args ?? [];
 
-	return false;
+		const format = options?.format ?? 'short';
+
+		const includeRun = RunScriptObject.#shouldRunKeywordBeIncluded(packageManager, script, format);
+		this.pmKeywords = [packageManager, ...(includeRun ? ['run'] : [])];
+
+		this.#argsDoubleDashes = ['npm', 'bun'].includes(packageManager) ? ' --' : '';
+	}
+
+	toString(): string {
+		return `${this.pmKeywords.join(' ')} ${this.script}${
+			this.args.length ? `${this.#argsDoubleDashes} ${this.args.join(' ')}` : ''
+		}`;
+	}
+
+	static #shouldRunKeywordBeIncluded(
+		packageManager: PackageManagerName,
+		script: string,
+		format: GetRunScriptOptions['format'],
+	): boolean {
+		if (format === 'full') return true;
+
+		if (script === 'start') return false;
+
+		if (packageManager === 'npm') return true;
+
+		// TODO: `run` is also necessary when scripts have the same name as package managers reserved keywords, we aren't currently
+		//       accounting for that, we should add here the proper checks for that
+		//       (e.g. `pnpm info` runs the `info` command, but `pnpm run info` runs the `info` script, but here we don't consider
+		//       that and always remove the `run` making the script command result invalid)
+
+		return false;
+	}
 }
 
 function getGetRunScriptObject(packageManager: PackageManagerName): GetRunScriptObject {
 	return (script, options) => {
 		if (!script) return null;
 
-		const args = options?.args ?? [];
-
-		const format = options?.format ?? 'short';
-
-		const includeRun = shouldRunKeywordBeIncluded(packageManager, script, format);
-		const pmKeywords = [packageManager, ...(includeRun ? ['run'] : [])];
-
-		const argsDoubleDashes = ['npm', 'bun'].includes(packageManager) ? ' --' : '';
-
-		return {
-			pmKeywords,
-			script,
-			args,
-			toString: () => {
-				return `${pmKeywords.join(' ')} ${script}${
-					args.length ? `${argsDoubleDashes} ${args.join(' ')}` : ''
-				}`;
-			},
-		};
+		return new RunScriptObject(packageManager, script, options);
 	};
 }
 
