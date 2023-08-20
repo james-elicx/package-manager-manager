@@ -1,2 +1,2 @@
 export * from './getRunScript';
-export * from './CommandObject';
+export * from './CommandStruct';

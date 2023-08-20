@@ -1,4 +1,4 @@
-type CommandObjectBase = {
+type CommandStructBase = {
 	/**
 	 * Package Manager specific keywords that representing the command to run
 	 * (e.g. `['pnpm', 'exec']`, `['yarn', 'dlx']`, etc...)
@@ -16,16 +16,17 @@ type CommandObjectBase = {
 	toString(): string;
 };
 
-export type CommandObject = CommandObjectBase & {
-	/** The command (from some dependency) the CommandObject is targeting
+export type CommandStruct = CommandStructBase & {
+	/**
+	 * The command (from some dependency) the object is targeting
 	 * (e.g. `'eslint'`, `'esbuild'`, `'prettier'`, etc...)
 	 */
 	command: string;
 };
 
-export type CommandScriptObject = CommandObjectBase & {
+export type CommandScriptStruct = CommandStructBase & {
 	/**
-	 * The script (as present in package.json) the CommandObject is targeting
+	 * The script (as present in package.json) the object is targeting
 	 * (e.g. `'my-script'`, `'build'`, `'test'`, etc...)
 	 */
 	script: string;

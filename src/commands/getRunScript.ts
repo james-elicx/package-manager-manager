@@ -1,7 +1,7 @@
 import type { PackageManagerName } from 'src/packageManager';
-import type { CommandScriptObject } from './CommandObject';
+import type { CommandScriptStruct } from './CommandStruct';
 
-class RunScriptObject implements CommandScriptObject {
+class RunScriptStruct implements CommandScriptStruct {
 	pmKeywords: string[];
 
 	args: string[];
@@ -17,7 +17,7 @@ class RunScriptObject implements CommandScriptObject {
 
 		const format = options?.format ?? 'short';
 
-		const includeRun = RunScriptObject.#shouldRunKeywordBeIncluded(packageManager, script, format);
+		const includeRun = RunScriptStruct.#shouldRunKeywordBeIncluded(packageManager, script, format);
 		this.pmKeywords = [packageManager, ...(includeRun ? ['run'] : [])];
 
 		this.#argsDoubleDashes = ['npm', 'bun'].includes(packageManager) ? ' --' : '';
@@ -71,21 +71,21 @@ export type GetRunScript = (
 	options?: Partial<GetRunScriptOptions>,
 ) => string | null;
 
-export type GetRunScriptObject = (
+export type GetRunScriptStruct = (
 	script: string,
 	options?: Partial<GetRunScriptOptions>,
-) => CommandScriptObject | null;
+) => CommandScriptStruct | null;
 
 export function getRunScriptFunctions(packageManager: PackageManagerName): {
-	getRunScriptObject: GetRunScriptObject;
 	getRunScript: GetRunScript;
+	getRunScriptStruct: GetRunScriptStruct;
 } {
-	const getRunScriptObject: GetRunScriptObject = (script, options) => {
+	const getRunScriptStruct: GetRunScriptStruct = (script, options) => {
 		if (!script) return null;
-		return new RunScriptObject(packageManager, script, options);
+		return new RunScriptStruct(packageManager, script, options);
 	};
 
-	const getRunScript: GetRunScript = (...args) => getRunScriptObject(...args)?.toString() ?? null;
+	const getRunScript: GetRunScript = (...args) => getRunScriptStruct(...args)?.toString() ?? null;
 
-	return { getRunScriptObject, getRunScript };
+	return { getRunScript, getRunScriptStruct };
 }

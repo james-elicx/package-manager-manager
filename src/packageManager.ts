@@ -1,5 +1,5 @@
 import shellac from 'shellac';
-import type { GetRunScript, GetRunScriptObject } from './commands';
+import type { GetRunScript, GetRunScriptStruct } from './commands';
 import { getRunScriptFunctions } from './commands';
 import { getPackageInfoFunction, type GetPackageInfo } from './package';
 import { getProjectRootDir, lockFiles } from './utils';
@@ -30,13 +30,13 @@ export type PackageManager = {
 	 */
 	getRunScript: GetRunScript;
 	/**
-	 * Gets an object representing the command needed to run a specified script.
+	 * Gets an structured representation for the command needed to run a specified script.
 	 *
 	 * @param script the script to run (e.g. `'start'`, `'lint'`, etc...)
-	 * @param options options Options indicating how the script should be created
+	 * @param options Options indicating how the script should be created
 	 * @returns an object representing the command needed to run the script, or null if the provided input script is invalid
 	 */
-	getRunScriptObject: GetRunScriptObject;
+	getRunScriptStruct: GetRunScriptStruct;
 };
 
 async function getPackageManagerVersion(packageManager: PackageManagerName): Promise<string> {
@@ -64,13 +64,13 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 			const name = packageManagerName;
 			const version = await getPackageManagerVersion(packageManagerName);
 			const getPackageInfo = getPackageInfoFunction({ name, version });
-			const { getRunScript, getRunScriptObject } = getRunScriptFunctions(name);
+			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(name);
 			return {
 				name,
 				version,
 				getPackageInfo,
 				getRunScript,
-				getRunScriptObject,
+				getRunScriptStruct,
 			};
 		}
 	}
