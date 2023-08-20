@@ -80,14 +80,12 @@ export function getRunScriptFunctions(packageManager: PackageManagerName): {
 	getRunScriptObject: GetRunScriptObject;
 	getRunScript: GetRunScript;
 } {
-
 	const getRunScriptObject: GetRunScriptObject = (script, options) => {
 		if (!script) return null;
 		return new RunScriptObject(packageManager, script, options);
 	};
 
-	const getRunScript: GetRunScript = (...args) =>
-		getRunScriptObject(...args)?.toString() ?? null;
+	const getRunScript: GetRunScript = (...args) => getRunScriptObject(...args)?.toString() ?? null;
 
 	return { getRunScriptObject, getRunScript };
 }
