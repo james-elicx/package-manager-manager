@@ -143,28 +143,6 @@ suite('Exec', () => {
 				});
 			});
 		});
-		// 	describe(`${pm}`, () => {
-		// 		test('simple exec run with default options', async ({ expect }) => {
-		// 			const packageManager = await getPackageManagerForTesting(pm);
-		// 			const struct = await packageManager.getRunExecStruct('eslint');
-		// 			if (pm === 'npm') {
-		// 				expect(struct?.pmKeywords).toEqual([pm, 'exec']);
-		// 			} else {
-		// 				// TODO
-		// 			}
-		// 			expect(struct?.command).toEqual('eslint');
-		// 			expect('script' in (struct ?? {})).toBe(false);
-		// 			expect(struct?.args).toEqual([]);
-
-		// 			if (pm === 'npm') {
-		// 				expect(`${struct}`).toEqual(`${pm} exec eslint`);
-		// 			} else {
-		// 				// TODO
-		// 				expect(`${struct}`).toEqual(`${pm} dlx eslint`);
-		// 			}
-		// 		});
-		// 	});
-		// });
 	});
 
 	// left TODO:
