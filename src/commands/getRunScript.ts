@@ -49,14 +49,6 @@ class RunScriptObject implements CommandScriptObject {
 	}
 }
 
-function getGetRunScriptObject(packageManager: PackageManagerName): GetRunScriptObject {
-	return (script, options) => {
-		if (!script) return null;
-
-		return new RunScriptObject(packageManager, script, options);
-	};
-}
-
 export type GetRunScriptOptions = {
 	/**
 	 * The arguments to pass to the script (e.g. `-h`, `--info`, etc...)
@@ -88,9 +80,13 @@ export function getRunScriptFunctions(packageManager: PackageManagerName): {
 	getRunScriptObject: GetRunScriptObject;
 	getRunScript: GetRunScript;
 } {
-	const getRunScriptObject = getGetRunScriptObject(packageManager);
 
-	const getRunScript = (...args: Parameters<typeof getRunScriptObject>) =>
+	const getRunScriptObject: GetRunScriptObject = (script, options) => {
+		if (!script) return null;
+		return new RunScriptObject(packageManager, script, options);
+	};
+
+	const getRunScript: GetRunScript = (...args) =>
 		getRunScriptObject(...args)?.toString() ?? null;
 
 	return { getRunScriptObject, getRunScript };
