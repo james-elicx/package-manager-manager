@@ -36,3 +36,31 @@ jobs:
 
       - name: ${{ matrix.script }}
         run: pnpm ${{ matrix.script }}
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Install other package managers
+        run: pnpm install -g npm@latest yarn@latest bun@latest
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
