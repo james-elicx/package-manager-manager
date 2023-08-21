@@ -40,7 +40,7 @@
 		"tsc": "tsc --noEmit",
 		"test": "vitest run --dir=tests",
 		"test:e2e": "vitest run --dir=e2e --no-threads",
-		"test:watch": "vitest --dir tests",
+		"test:watch": "vitest --dir=tests",
 		"test:coverage": "vitest run --coverage",
 		"alter-version": "node ./scripts/alter-version.js",
 		"release": "changeset publish"
