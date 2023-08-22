@@ -38,8 +38,9 @@
 		"prettier": "prettier --ignore-unknown --ignore-path .gitignore --ignore-path .prettierignore --check .",
 		"prettier:fix": "prettier --ignore-unknown --ignore-path .gitignore --ignore-path .prettierignore --write .",
 		"tsc": "tsc --noEmit",
-		"test": "vitest run",
-		"test:watch": "vitest",
+		"test": "vitest run --dir=tests",
+		"test:watch": "vitest --dir=tests",
+		"test:e2e": "vitest run --dir=e2e --no-threads",
 		"test:coverage": "vitest run --coverage",
 		"alter-version": "node ./scripts/alter-version.js",
 		"release": "changeset publish"
