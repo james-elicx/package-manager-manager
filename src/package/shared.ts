@@ -1,5 +1,5 @@
 import shellac from 'shellac';
-import type { PackageManagerName } from 'src/packageManager';
+import type { PackageManagerName } from '../packageManager';
 import type { GetPackageInfo } from './index';
 
 type NpmListOutputJsonDependency = {

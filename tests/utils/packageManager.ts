@@ -1,5 +1,5 @@
-import { getPackageManager } from 'src/packageManager';
-import type { PackageManager, PackageManagerName } from 'src/packageManager';
+import { getPackageManager } from '../../src/packageManager';
+import type { PackageManager, PackageManagerName } from '../../src/packageManager';
 import { setupFsForTesting } from './fsSetup';
 
 /**

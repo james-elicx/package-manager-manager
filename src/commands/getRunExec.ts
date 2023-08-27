@@ -1,5 +1,5 @@
-import type { PackageManager } from 'src/packageManager';
-import { isYarnClassic } from 'tests/utils';
+import type { PackageManager } from '../packageManager';
+import { isYarnClassic } from '../utils';
 import type { CommandExecStruct } from './CommandStruct';
 
 class RunExecStruct implements CommandExecStruct {
