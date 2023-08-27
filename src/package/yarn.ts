@@ -1,54 +1,29 @@
 import shellac from 'shellac';
+import type { PackageManager } from '../packageManager';
 import type { GetPackageInfo } from './index';
 
-type Yarn1InfoOutputJson = {
-	type: 'inspect';
-	data: {
-		name: string;
-		version: string;
-	};
-};
-
-type YarnBerryInfoOutputJson = {
-	value: string;
-	children: {
-		Version: string;
-	};
-};
-
-export function getYarnGetPackageInfoFunction(yarnVersion: string) {
+export function getYarnGetPackageInfoFunction(
+	packageManager: Pick<PackageManager, 'name' | 'version'>,
+) {
 	return async (...[name]: Parameters<GetPackageInfo>): ReturnType<GetPackageInfo> => {
-		const yarnInfoCommand = `$ yarn info ${name} --json`;
-
 		try {
 			let version: string | undefined;
-			if (yarnVersion.startsWith('1')) {
-				const outputJson: Yarn1InfoOutputJson = JSON.parse(
-					(await shellac`${yarnInfoCommand}`).stdout ?? 'null',
-				);
-				version = outputJson?.data.version;
+			// TODO: use isYarnClassic util from PR #19
+			const isYarnClassic =
+				packageManager.name === 'yarn' && packageManager.version.startsWith('1.');
+
+			if (isYarnClassic) {
+				const commandOutput = (await shellac`$ yarn list pattern ${name}`).stdout;
+
+				const versionRegex = new RegExp(`^[└─\\s]*${name}@(\\S*)`, 'im');
+				const match = commandOutput.match(versionRegex);
+				version = match?.[1];
 			} else {
-				try {
-					let outputJsonStr = 'null';
-					await shellac`
-          ${yarnInfoCommand}
+				const commandOutput = (await shellac`$ yarn why ${name}`).stdout;
 
-          stdout >> ${(json) => {
-						outputJsonStr = json;
-					}}
-
-          exitcode >> ${(code) => {
-						if (code !== '0') {
-							outputJsonStr = 'null';
-						}
-					}}
-        `;
-
-					const outputJson: YarnBerryInfoOutputJson | null = JSON.parse(outputJsonStr);
-					version = outputJson?.children.Version;
-				} catch {
-					/**/
-				}
+				const versionRegex = new RegExp(`^[└─\\s]*${name}@(?:\\S+:)?(\\S*)`, 'im');
+				const match = commandOutput.match(versionRegex);
+				version = match?.[1];
 			}
 
 			if (!version) {
