@@ -1,4 +1,5 @@
 import type { PackageManager } from 'src/packageManager';
+import { isYarnClassic } from 'tests/utils';
 import type { CommandExecStruct } from './CommandStruct';
 
 class RunExecStruct implements CommandExecStruct {
@@ -27,11 +28,15 @@ class RunExecStruct implements CommandExecStruct {
 				if (['yarn', 'pnpm'].includes(packageManager.name) && pmKeywords[1] === 'exec') {
 					this.command = RunExecStruct.#unscopeCommand(this.command);
 				}
+				const isNpmExec = packageManager.name === 'npm' && this.pmKeywords[1] === 'exec';
+				if (isNpmExec) {
+					this.#argsDoubleDashes = ' --';
+				}
 				resolve();
 			});
 		});
 
-		this.#argsDoubleDashes = ['npm', 'bun'].includes(packageManager.name) ? ' --' : '';
+		this.#argsDoubleDashes = isYarnClassic(packageManager) ? ' --' : '';
 	}
 
 	toString(): string {
@@ -49,7 +54,7 @@ class RunExecStruct implements CommandExecStruct {
 		if (packageManager.name === 'bun') return format === 'short' ? ['bunx'] : ['bun', 'x'];
 		if (packageManager.name === 'npm') return format === 'short' ? ['npx'] : ['npm', 'exec'];
 
-		if (packageManager.name === 'yarn' && packageManager.version.startsWith('1')) {
+		if (packageManager.name === 'yarn' && packageManager.version.startsWith('1.')) {
 			// yarn classic doesn't have dlx
 			return ['yarn', 'exec'];
 		}
