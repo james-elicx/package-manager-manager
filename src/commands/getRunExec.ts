@@ -11,7 +11,7 @@ class RunExecStruct implements CommandExecStruct {
 	#argsDoubleDashes: string;
 
 	constructor(
-		packageManager: Pick<PackageManager, 'name' | 'getPackageInfo'>,
+		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
 		public command: string,
 		options?: Partial<GetRunExecOptions>,
 	) {
@@ -41,7 +41,7 @@ class RunExecStruct implements CommandExecStruct {
 	}
 
 	static async #getPmKeywords(
-		packageManager: Pick<PackageManager, 'name' | 'getPackageInfo'>,
+		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
 		command: string,
 		format: 'short' | 'full',
 		download: DownloadPreference,
@@ -49,12 +49,19 @@ class RunExecStruct implements CommandExecStruct {
 		if (packageManager.name === 'bun') return format === 'short' ? ['bunx'] : ['bun', 'x'];
 		if (packageManager.name === 'npm') return format === 'short' ? ['npx'] : ['npm', 'exec'];
 
+		if (packageManager.name === 'yarn' && packageManager.version.startsWith('1')) {
+			// yarn classic doesn't have dlx
+			return ['yarn', 'exec'];
+		}
+
 		if (download === 'prefer-always') {
 			return [packageManager.name, 'dlx'];
 		}
+
 		if (download === 'prefer-never') {
 			return [packageManager.name, 'exec'];
 		}
+
 		const isPackageInstalled = await packageManager.getPackageInfo(command);
 		return [packageManager.name, isPackageInstalled ? 'exec' : 'dlx'];
 	}
@@ -113,7 +120,7 @@ export type GetRunExecStruct = (
 ) => Promise<CommandExecStruct | null>;
 
 export function getRunExecFunctions(
-	packageManager: Pick<PackageManager, 'name' | 'getPackageInfo'>,
+	packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
 ): {
 	getRunExec: GetRunExec;
 	getRunExecStruct: GetRunExecStruct;

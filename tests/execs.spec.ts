@@ -2,8 +2,18 @@ import mockFs from 'mock-fs';
 import { vi, suite, test, afterEach, describe } from 'vitest';
 import { getPackageManagerForTesting } from './utils';
 
+const shellacMocks = {
+	stdout: '',
+	stderr: '',
+};
+
+function resetShellacMocks() {
+	shellacMocks.stdout = '';
+	shellacMocks.stderr = '';
+}
+
 vi.mock('shellac', () => ({
-	default: () => ({ stdout: '', stderr: '' }),
+	default: () => shellacMocks,
 }));
 
 suite('Exec', () => {
@@ -205,9 +215,25 @@ suite('Exec', () => {
 		});
 	});
 
+	test("yarn classic doesn't use dlx (since not available)", async ({ expect }) => {
+		const packageManager = await getPackageManagerForTesting('yarn', '1.22.18', (str) => {
+			shellacMocks.stdout = str;
+		});
+		const struct = await packageManager.getRunExecStruct('eslint', {
+			download: 'prefer-always',
+		});
+
+		expect(struct?.pmKeywords).toEqual(['yarn', 'exec']);
+		expect(struct?.command).toEqual('eslint');
+		expect('script' in (struct ?? {})).toBe(false);
+		expect(struct?.args).toEqual([]);
+
+		expect(`${struct}`).toEqual('yarn exec eslint');
+		resetShellacMocks();
+	});
+
 	// left TODO:
 	//   - [] short vs long form, make sure both handle args correctly: https://docs.npmjs.com/cli/v8/commands/npm-exec#npx-vs-npm-exec
-	//   - [] make sure to support yarn v1 (which doesn't have the dlx command)
 
 	describe('getRunExec', () => {
 		afterEach(() => mockFs.restore());
