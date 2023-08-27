@@ -8,7 +8,7 @@ class RunExecStruct implements CommandExecStruct {
 
 	args: string[];
 
-	#argsDoubleDashes = '';
+	#argsDoubleDashes: string;
 
 	constructor(
 		packageManager: Pick<PackageManager, 'name' | 'getPackageInfo'>,
@@ -23,6 +23,10 @@ class RunExecStruct implements CommandExecStruct {
 		this.structIsReady = new Promise((resolve) => {
 			RunExecStruct.#getPmKeywords(packageManager, command, format, download).then((pmKeywords) => {
 				this.pmKeywords = pmKeywords;
+
+				if (['yarn', 'pnpm'].includes(packageManager.name) && pmKeywords[1] === 'exec') {
+					this.command = RunExecStruct.#unscopeCommand(this.command);
+				}
 				resolve();
 			});
 		});
@@ -51,9 +55,23 @@ class RunExecStruct implements CommandExecStruct {
 		if (download === 'prefer-never') {
 			return [packageManager.name, 'exec'];
 		}
-		// NOTE: check if here we need to be more clever
 		const isPackageInstalled = await packageManager.getPackageInfo(command);
 		return [packageManager.name, isPackageInstalled ? 'exec' : 'dlx'];
+	}
+
+	/**
+	 * Unscopes a given command, for example it converts "@org/my-cmd" to "my-cmd"
+	 * (already non scoped commands are left untouched)
+	 *
+	 * @param {string} command the command to potentially unscope
+	 * @returns {string} the unscoped version of the provided command
+	 */
+	static #unscopeCommand(command: string): string {
+		const match = command.match(/^@[^/]+\/(.*)/);
+		if (!match?.[1]) {
+			return command;
+		}
+		return match[1];
 	}
 }
 

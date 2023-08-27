@@ -141,15 +141,73 @@ suite('Exec', () => {
 						expect(`${struct}`).toEqual(expectedStr);
 					});
 				});
+
+				test('unscopes scoped commands if needed', async ({ expect }) => {
+					// TODO: investigate what yarn and pnpm do when multiple scoped commands
+					//       result in the save unscoped command
+					const packageManager = await getPackageManagerForTesting(pm);
+					const struct = await packageManager.getRunExecStruct('@org/cmd', {
+						download: 'prefer-never',
+					});
+
+					const expectedPmKeys = {
+						npm: ['npx'],
+						yarn: ['yarn', 'exec'],
+						pnpm: ['pnpm', 'exec'],
+						bun: ['bunx'],
+					}[pm];
+					expect(struct?.pmKeywords).toEqual(expectedPmKeys);
+					const expectedCmd = {
+						npm: '@org/cmd',
+						yarn: 'cmd',
+						pnpm: 'cmd',
+						bun: '@org/cmd',
+					}[pm];
+					expect(struct?.command).toEqual(expectedCmd);
+					expect('script' in (struct ?? {})).toBe(false);
+					expect(struct?.args).toEqual([]);
+
+					const expectedStr = {
+						npm: 'npx @org/cmd',
+						yarn: 'yarn exec cmd',
+						pnpm: 'pnpm exec cmd',
+						bun: 'bunx @org/cmd',
+					}[pm];
+					expect(`${struct}`).toEqual(expectedStr);
+				});
+
+				test("doesn't unscopes scoped commands when it shouldn't", async ({ expect }) => {
+					const packageManager = await getPackageManagerForTesting(pm);
+					const struct = await packageManager.getRunExecStruct('@org/cmd', {
+						download: 'prefer-always',
+					});
+
+					const expectedPmKeys = {
+						npm: ['npx'],
+						yarn: ['yarn', 'dlx'],
+						pnpm: ['pnpm', 'dlx'],
+						bun: ['bunx'],
+					}[pm];
+					expect(struct?.pmKeywords).toEqual(expectedPmKeys);
+					expect(struct?.command).toEqual('@org/cmd');
+					expect('script' in (struct ?? {})).toBe(false);
+					expect(struct?.args).toEqual([]);
+
+					const expectedStr = {
+						npm: 'npx @org/cmd',
+						yarn: 'yarn dlx @org/cmd',
+						pnpm: 'pnpm dlx @org/cmd',
+						bun: 'bunx @org/cmd',
+					}[pm];
+					expect(`${struct}`).toEqual(expectedStr);
+				});
 			});
 		});
 	});
 
 	// left TODO:
 	//   - [] short vs long form, make sure both handle args correctly: https://docs.npmjs.com/cli/v8/commands/npm-exec#npx-vs-npm-exec
-	//   - [] make sure the check for package installation is correct (me might need to strip some parts of the command)
-	//   - [] make sure that versions can also be included in the commands
-	//   - [] make sure to strip orgs when needed (as for example `npx @cloudflare/next-on-pages` vs `pnpm exec next-on-pages`)
+	//   - [] make sure to support yarn v1 (which doesn't have the dlx command)
 
 	describe('getRunExec', () => {
 		afterEach(() => mockFs.restore());
