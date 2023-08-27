@@ -1,6 +1,6 @@
 import mockFs from 'mock-fs';
-import { getPackageManager } from '../src/packageManager';
 import { vi, suite, test, expect, describe, afterEach } from 'vitest';
+import { getPackageManager } from '../src/packageManager';
 import { setupFsForTesting } from './utils';
 
 vi.mock('shellac', () => ({
