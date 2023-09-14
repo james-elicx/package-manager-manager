@@ -51,24 +51,37 @@ class RunExecStruct implements CommandExecStruct {
 		format: 'short' | 'full',
 		download: DownloadPreference,
 	): Promise<string[]> {
-		if (packageManager.name === 'bun') return format === 'short' ? ['bunx'] : ['bun', 'x'];
-		if (packageManager.name === 'npm') return format === 'short' ? ['npx'] : ['npm', 'exec'];
-
-		if (packageManager.name === 'yarn' && packageManager.version.startsWith('1.')) {
-			// yarn classic doesn't have dlx
-			return ['yarn', 'exec'];
+		switch (packageManager.name) {
+			case 'bun':
+				return format === 'short' ? ['bunx'] : ['bun', 'x'];
+			case 'npm':
+				return format === 'short' ? ['npx'] : ['npm', 'exec'];
+			case 'yarn':
+				if (packageManager.version.startsWith('1.')) {
+					// yarn classic doesn't have dlx
+					return ['yarn', 'exec'];
+				}
+				break;
+			default:
 		}
 
-		if (download === 'prefer-always') {
-			return [packageManager.name, 'dlx'];
+		let result: string[] = [];
+		// eslint-disable-next-line default-case
+		switch (download) {
+			case 'prefer-always':
+				result = [packageManager.name, 'dlx'];
+				break;
+			case 'prefer-never':
+				result = [packageManager.name, 'exec'];
+				break;
+			case 'prefer-if-needed': {
+				const isPackageInstalled = await packageManager.getPackageInfo(command);
+				result = [packageManager.name, isPackageInstalled ? 'exec' : 'dlx'];
+				break;
+			}
 		}
 
-		if (download === 'prefer-never') {
-			return [packageManager.name, 'exec'];
-		}
-
-		const isPackageInstalled = await packageManager.getPackageInfo(command);
-		return [packageManager.name, isPackageInstalled ? 'exec' : 'dlx'];
+		return result;
 	}
 
 	/**
