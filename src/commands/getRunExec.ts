@@ -75,15 +75,12 @@ class RunExecStruct implements CommandExecStruct {
 	 * Unscopes a given command, for example it converts "@org/my-cmd" to "my-cmd"
 	 * (already non scoped commands are left untouched)
 	 *
-	 * @param {string} command the command to potentially unscope
-	 * @returns {string} the unscoped version of the provided command
+	 * @param command the command to potentially unscope
+	 * @returns the unscoped version of the provided command
 	 */
 	static #unscopeCommand(command: string): string {
 		const match = command.match(/^@[^/]+\/(.*)/);
-		if (!match?.[1]) {
-			return command;
-		}
-		return match[1];
+		return match?.[1] ?? command;
 	}
 }
 
