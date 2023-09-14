@@ -320,6 +320,29 @@ suite('Exec', () => {
 			expect(await packageManager.getRunExec('')).toBe(null);
 		});
 
-		test.skip('delegates to getRunExecStruct', () => {});
+		test('delegates to getRunExecStruct', ({ expect }) => {
+			(['npm', 'yarn', 'pnpm', 'bun'] as const).forEach((pm) => {
+				[
+					{ pkg: 'eslint', installed: true },
+					{ pkg: 'non-existent', installed: false },
+				].forEach(({ pkg, installed }) => {
+					[[], ['--fix'], ['.']].forEach((args) => {
+						(['short', 'full'] as const).forEach((format) => {
+							(['prefer-always', 'prefer-if-needed', 'prefer-never'] as const).forEach(
+								async (download) => {
+									const packageManager = await getPackageManagerForTesting(pm);
+									packageManager.getPackageInfo = async () =>
+										installed ? { name: pkg, version: '123' } : null;
+									const options = { format, args, download };
+									const str = await packageManager.getRunExec(pkg, options);
+									const struct = await packageManager.getRunExecStruct(pkg, options);
+									expect(str).toEqual(struct?.toString());
+								},
+							);
+						});
+					});
+				});
+			});
+		});
 	});
 });
