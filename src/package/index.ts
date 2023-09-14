@@ -28,9 +28,8 @@ export function getPackageInfoFunction(
 			return getNpmGetPackageInfoFunction();
 		case 'pnpm':
 			return getPnpmGetPackageInfoFunction();
-		case 'yarn': {
+		case 'yarn':
 			return getYarnGetPackageInfoFunction(packageManager);
-		}
 		case 'bun':
 			return getBunGetPackageInfoFunction();
 		default:
