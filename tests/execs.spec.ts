@@ -155,7 +155,7 @@ suite('Exec', () => {
 
 				test('unscopes scoped commands if needed', async ({ expect }) => {
 					// TODO: investigate what yarn and pnpm do when multiple scoped commands
-					//       result in the save unscoped command
+					//       result in the same unscoped command
 					const packageManager = await getPackageManagerForTesting(pm);
 					const struct = await packageManager.getRunExecStruct('@org/cmd', {
 						download: 'prefer-never',
