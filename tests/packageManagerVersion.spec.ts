@@ -1,6 +1,6 @@
 import mockFs from 'mock-fs';
-import { getPackageManager } from 'src/packageManager';
 import { suite, test, expect, beforeEach, afterEach, vi } from 'vitest';
+import { getPackageManager } from '../src/packageManager';
 import { setupFsForTesting } from './utils';
 
 type ShellacMock = {

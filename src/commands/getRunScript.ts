@@ -1,4 +1,4 @@
-import type { PackageManagerName } from 'src/packageManager';
+import type { PackageManagerName } from '../packageManager';
 import type { CommandScriptStruct } from './CommandStruct';
 
 class RunScriptStruct implements CommandScriptStruct {

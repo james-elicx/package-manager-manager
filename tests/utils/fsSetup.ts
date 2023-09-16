@@ -1,7 +1,7 @@
 import { writeFile } from 'node:fs/promises';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import mockFs from 'mock-fs';
-import type { PackageManagerName } from 'src/packageManager';
+import type { PackageManagerName } from '../../src/packageManager';
 
 type SetupFsForOptions = {
 	forWorkspace: boolean;

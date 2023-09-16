@@ -16,7 +16,7 @@ type CommandStructBase = {
 	toString(): string;
 };
 
-export type CommandStruct = CommandStructBase & {
+export type CommandExecStruct = CommandStructBase & {
 	/**
 	 * The command (from some dependency) the object is targeting
 	 * (e.g. `'eslint'`, `'esbuild'`, `'prettier'`, etc...)
