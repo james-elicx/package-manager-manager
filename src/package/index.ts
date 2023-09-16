@@ -29,7 +29,7 @@ export function getPackageInfoFunction(
 		case 'pnpm':
 			return getPnpmGetPackageInfoFunction();
 		case 'yarn':
-			return getYarnGetPackageInfoFunction(packageManager.version);
+			return getYarnGetPackageInfoFunction(packageManager);
 		case 'bun':
 			return getBunGetPackageInfoFunction();
 		default:
