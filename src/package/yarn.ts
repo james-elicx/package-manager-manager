@@ -1,5 +1,6 @@
 import shellac from 'shellac';
 import type { PackageManager } from '../packageManager';
+import { isYarnClassic } from '../utils';
 import type { GetPackageInfo } from './index';
 
 export function getYarnGetPackageInfoFunction(
@@ -8,11 +9,8 @@ export function getYarnGetPackageInfoFunction(
 	return async (...[name]: Parameters<GetPackageInfo>): ReturnType<GetPackageInfo> => {
 		try {
 			let version: string | undefined;
-			// TODO: use isYarnClassic util from PR #19
-			const isYarnClassic =
-				packageManager.name === 'yarn' && packageManager.version.startsWith('1.');
 
-			if (isYarnClassic) {
+			if (isYarnClassic(packageManager)) {
 				const commandOutput = (await shellac`$ yarn list pattern ${name}`).stdout;
 
 				const versionRegex = new RegExp(`^[└─\\s]*${name}@(\\S*)`, 'im');
