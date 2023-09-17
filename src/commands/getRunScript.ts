@@ -6,7 +6,7 @@ class RunScriptStruct implements CommandScriptStruct {
 
 	args: string[];
 
-	#argsDoubleDashes = '';
+	argsNeedDoubleDashes: boolean;
 
 	constructor(
 		packageManager: PackageManagerName,
@@ -20,12 +20,13 @@ class RunScriptStruct implements CommandScriptStruct {
 		const includeRun = RunScriptStruct.#shouldRunKeywordBeIncluded(packageManager, script, format);
 		this.pmKeywords = [packageManager, ...(includeRun ? ['run'] : [])];
 
-		this.#argsDoubleDashes = ['npm', 'bun'].includes(packageManager) ? ' --' : '';
+		this.argsNeedDoubleDashes = ['npm', 'bun'].includes(packageManager);
+
 	}
 
 	toString(): string {
 		return `${this.pmKeywords.join(' ')} ${this.script}${
-			this.args.length ? `${this.#argsDoubleDashes} ${this.args.join(' ')}` : ''
+			this.args.length ? `${this.argsNeedDoubleDashes ? ' --' : ''} ${this.args.join(' ')}` : ''
 		}`;
 	}
 

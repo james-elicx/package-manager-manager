@@ -9,7 +9,7 @@ class RunExecStruct implements CommandExecStruct {
 
 	args: string[];
 
-	#argsDoubleDashes: string;
+	argsNeedDoubleDashes: boolean;
 
 	constructor(
 		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
@@ -30,18 +30,18 @@ class RunExecStruct implements CommandExecStruct {
 				}
 				const isNpmExec = packageManager.name === 'npm' && this.pmKeywords[1] === 'exec';
 				if (isNpmExec) {
-					this.#argsDoubleDashes = ' --';
+					this.argsNeedDoubleDashes = true;
 				}
 				resolve();
 			});
 		});
 
-		this.#argsDoubleDashes = isYarnClassic(packageManager) ? ' --' : '';
+		this.argsNeedDoubleDashes = isYarnClassic(packageManager);
 	}
 
 	toString(): string {
 		return `${this.pmKeywords.join(' ')} ${this.command}${
-			this.args.length ? `${this.#argsDoubleDashes} ${this.args.join(' ')}` : ''
+			this.args.length ? `${this.argsNeedDoubleDashes ? ' --' : ''} ${this.args.join(' ')}` : ''
 		}`;
 	}
 
