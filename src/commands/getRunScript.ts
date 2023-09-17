@@ -21,7 +21,6 @@ class RunScriptStruct implements CommandScriptStruct {
 		this.pmKeywords = [packageManager, ...(includeRun ? ['run'] : [])];
 
 		this.argsNeedDoubleDashes = ['npm', 'bun'].includes(packageManager);
-
 	}
 
 	toString(): string {
