@@ -10,6 +10,10 @@ type CommandStructBase = {
 	 */
 	args: string[]; // basically spitting out what the user provided
 	/**
+	 * Flag indicating whether double dashes need to prepend the command's arguments.
+	 */
+	argsNeedDoubleDashes: boolean;
+	/**
 	 * Method to print the command ready for use
 	 * (e.g. `'npm run dev'`, `'pnpm dlx eslint --fix --quiet'`, etc...)
 	 */
