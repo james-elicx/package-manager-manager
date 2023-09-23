@@ -55,7 +55,7 @@ console.log(packageManager.version);
 #### Example
 
 ```js
-const zodPackage = await packageManager?.getPackageInfo('zod');
+const zodPackage = await packageManager.getPackageInfo('zod');
 if (zodPackage) {
 	console.log(`starting validation using zod (version: ${zodPackage.version}`);
 } else {
