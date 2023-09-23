@@ -2,7 +2,7 @@ import shellac from 'shellac';
 import type { GetRunExec, GetRunExecStruct, GetRunScript, GetRunScriptStruct } from './commands';
 import { getRunExecFunctions, getRunScriptFunctions } from './commands';
 import { getPackageInfoFunction, type GetPackageInfo } from './package';
-import { getProjectRootDir, lockFiles } from './utils';
+import { getPmCliCommandKeywords, getProjectRootDir, lockFiles } from './utils';
 
 export type PackageManagerName = 'npm' | 'yarn' | 'pnpm' | 'bun';
 
@@ -53,6 +53,13 @@ export type PackageManager = {
 	 * @returns a string representing the command needed to run the package command, or null if the provided input package command is invalid
 	 */
 	getRunExecStruct: GetRunExecStruct;
+	/**
+	 * Set of all (reserved) command keywords for the package manager.
+	 *
+	 * For example, for npm some of such keywords are: `install`, `uninstall` and `help`, but not that
+	 * `npx` is not part of the set since it is a different command entirely and not a keyword used in npm (i.e. you don't run `npm npx`)
+	 */
+	cliCommandKeywords: Set<string>;
 };
 
 async function getPackageManagerVersion(packageManager: PackageManagerName): Promise<string> {
@@ -79,15 +86,25 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 		if (projectRootFiles.includes(lockFiles[packageManagerName])) {
 			const name = packageManagerName;
 			const version = await getPackageManagerVersion(packageManagerName);
-			const packageManager: Partial<PackageManager> = {
+			const packageManager: PackageManager = {
 				name: packageManagerName,
 				version,
+				// initialization of dummy fields which get populated in the next steps
+				cliCommandKeywords: new Set(),
+				getPackageInfo: async () => null,
+				getRunScript: () => null,
+				getRunScriptStruct: () => null,
+				getRunExec: async () => null,
+				getRunExecStruct: async () => null,
 			};
+
+			packageManager.cliCommandKeywords = getPmCliCommandKeywords(packageManager);
+
 			packageManager.getPackageInfo = getPackageInfoFunction({ name, version });
-			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(name);
-			const { getRunExec, getRunExecStruct } = getRunExecFunctions(
-				packageManager as Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
-			);
+
+			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(packageManager);
+
+			const { getRunExec, getRunExecStruct } = getRunExecFunctions(packageManager);
 
 			packageManager.getRunScript = getRunScript;
 			packageManager.getRunScriptStruct = getRunScriptStruct;
@@ -95,7 +112,7 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 			packageManager.getRunExec = getRunExec;
 			packageManager.getRunExecStruct = getRunExecStruct;
 
-			return packageManager as PackageManager;
+			return packageManager;
 		}
 	}
 

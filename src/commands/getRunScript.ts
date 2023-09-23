@@ -1,4 +1,4 @@
-import type { PackageManagerName } from '../packageManager';
+import type { PackageManager } from '../packageManager';
 import type { CommandScriptStruct } from './CommandStruct';
 
 class RunScriptStruct implements CommandScriptStruct {
@@ -9,7 +9,7 @@ class RunScriptStruct implements CommandScriptStruct {
 	argsNeedDoubleDashes: boolean;
 
 	constructor(
-		packageManager: PackageManagerName,
+		packageManager: Pick<PackageManager, 'name' | 'cliCommandKeywords'>,
 		public script: string,
 		options?: Partial<GetRunScriptOptions>,
 	) {
@@ -18,9 +18,9 @@ class RunScriptStruct implements CommandScriptStruct {
 		const format = options?.format ?? 'short';
 
 		const includeRun = RunScriptStruct.#shouldRunKeywordBeIncluded(packageManager, script, format);
-		this.pmKeywords = [packageManager, ...(includeRun ? ['run'] : [])];
+		this.pmKeywords = [packageManager.name, ...(includeRun ? ['run'] : [])];
 
-		this.argsNeedDoubleDashes = ['npm', 'bun'].includes(packageManager);
+		this.argsNeedDoubleDashes = ['npm', 'bun'].includes(packageManager.name);
 	}
 
 	toString(): string {
@@ -30,7 +30,7 @@ class RunScriptStruct implements CommandScriptStruct {
 	}
 
 	static #shouldRunKeywordBeIncluded(
-		packageManager: PackageManagerName,
+		packageManager: Pick<PackageManager, 'name' | 'cliCommandKeywords'>,
 		script: string,
 		format: GetRunScriptOptions['format'],
 	): boolean {
@@ -38,12 +38,10 @@ class RunScriptStruct implements CommandScriptStruct {
 
 		if (script === 'start') return false;
 
-		if (packageManager === 'npm') return true;
+		if (packageManager.name === 'npm') return true;
 
-		// TODO: `run` is also necessary when scripts have the same name as package managers reserved keywords, we aren't currently
-		//       accounting for that, we should add here the proper checks for that
-		//       (e.g. `pnpm info` runs the `info` command, but `pnpm run info` runs the `info` script, but here we don't consider
-		//       that and always remove the `run` making the script command result invalid)
+		const scriptCollidesWithCliKeyword = packageManager.cliCommandKeywords.has(script);
+		if (scriptCollidesWithCliKeyword) return true;
 
 		return false;
 	}
@@ -76,7 +74,9 @@ export type GetRunScriptStruct = (
 	options?: Partial<GetRunScriptOptions>,
 ) => CommandScriptStruct | null;
 
-export function getRunScriptFunctions(packageManager: PackageManagerName): {
+export function getRunScriptFunctions(
+	packageManager: Pick<PackageManager, 'name' | 'cliCommandKeywords'>,
+): {
 	getRunScript: GetRunScript;
 	getRunScriptStruct: GetRunScriptStruct;
 } {
