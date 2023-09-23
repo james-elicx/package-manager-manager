@@ -41,7 +41,6 @@ class RunScriptStruct implements CommandScriptStruct {
 		if (packageManager.name === 'npm') return true;
 
 		const scriptCollidesWithCliKeyword = packageManager.cliCommandKeywords.has(script);
-		// if(scriptCollidesWithCliKeyword) console.log('collision');
 		if (scriptCollidesWithCliKeyword) return true;
 
 		return false;
