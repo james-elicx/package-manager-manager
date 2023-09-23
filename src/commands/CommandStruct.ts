@@ -1,9 +1,13 @@
 type CommandStructBase = {
 	/**
-	 * Package Manager specific keywords that representing the command to run
-	 * (e.g. `['pnpm', 'exec']`, `['yarn', 'dlx']`, etc...)
+	 * Package manager command to run (`npm`, `npx`, `yarn`, `pnpm`, `bun` or `bunx`)
 	 */
-	pmKeywords: string[];
+	cmd: string;
+	/**
+	 * Package Manager specific keyword that representing the command to run (if any)
+	 * (e.g. `run`, `exec`, `dlx`, etc...)
+	 */
+	pmCommand?: string;
 	/**
 	 * The arguments passed to the target command
 	 * (e.g. `['--help']`, `['./dist']`, `['--ignore-path', '.gitignore']`, etc...)

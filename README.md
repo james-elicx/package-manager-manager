@@ -79,7 +79,7 @@ const runBuildCommand = packageManager.getRunScript('build', {
 	args: ['./dist', '--verbose'],
 });
 
-exec(runBuildCommand);
+console.log(`To build your application run: ${runBuildCommand}`);
 ```
 
 ### getRunExec
@@ -95,5 +95,5 @@ const eslintCommand = packageManager.getRunExec('eslint', {
 	args: ['./src', '--quiet'],
 });
 
-exec(eslintCommand);
+console.log(`To run eslint on your application run: ${runBuildCommand}`);
 ```

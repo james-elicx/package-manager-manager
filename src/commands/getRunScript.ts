@@ -2,7 +2,9 @@ import type { PackageManager } from '../packageManager';
 import type { CommandScriptStruct } from './CommandStruct';
 
 class RunScriptStruct implements CommandScriptStruct {
-	pmKeywords: string[];
+	cmd: string;
+
+	pmCommand?: string = undefined;
 
 	args: string[];
 
@@ -17,14 +19,17 @@ class RunScriptStruct implements CommandScriptStruct {
 
 		const format = options?.format ?? 'short';
 
+		this.cmd = packageManager.name;
 		const includeRun = RunScriptStruct.#shouldRunKeywordBeIncluded(packageManager, script, format);
-		this.pmKeywords = [packageManager.name, ...(includeRun ? ['run'] : [])];
+		if(includeRun) {
+			this.pmCommand = 'run';
+		}
 
 		this.argsNeedDoubleDashes = ['npm', 'bun'].includes(packageManager.name);
 	}
 
 	toString(): string {
-		return `${this.pmKeywords.join(' ')} ${this.script}${
+		return `${this.cmd}${this.pmCommand ? ` ${this.pmCommand}` : ''} ${this.script}${
 			this.args.length ? `${this.argsNeedDoubleDashes ? ' --' : ''} ${this.args.join(' ')}` : ''
 		}`;
 	}
