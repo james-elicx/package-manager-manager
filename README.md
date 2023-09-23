@@ -55,16 +55,16 @@ console.log(packageManager.version);
 #### Example
 
 ```js
-  const zodPackage = await packageManager?.getPackageInfo('zod');
-  if(zodPackage) {
-    console.log(`starting validation using zod (version: ${zodPackage.version}`);
-  } else {
-    throw new Error('Error: zod is not installed');
-  }
+const zodPackage = await packageManager?.getPackageInfo('zod');
+if (zodPackage) {
+	console.log(`starting validation using zod (version: ${zodPackage.version}`);
+} else {
+	throw new Error('Error: zod is not installed');
+}
 ```
 
 > **Note**
-> This method only returns the information of a __locally installed package__, or _null_ in case the package is not installed, it does not return information of packages not locally installed (the API could be extended in the future to also include such use case)
+> This method only returns the information of a **locally installed package**, or _null_ in case the package is not installed, it does not return information of packages not locally installed (the API could be extended in the future to also include such use case)
 
 ### getRunScript
 
@@ -76,7 +76,7 @@ console.log(packageManager.version);
 
 ```js
 const runBuildCommand = packageManager.getRunScript('build', {
-    args: ['./dist', '--verbose']
+	args: ['./dist', '--verbose'],
 });
 
 exec(runBuildCommand);
@@ -92,7 +92,7 @@ exec(runBuildCommand);
 
 ```js
 const eslintCommand = packageManager.getRunExec('eslint', {
-    args: ['./src', '--quiet'],
+	args: ['./src', '--quiet'],
 });
 
 exec(eslintCommand);
