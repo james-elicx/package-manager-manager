@@ -102,9 +102,7 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 
 			packageManager.getPackageInfo = getPackageInfoFunction({ name, version });
 
-			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(
-				packageManager
-			);
+			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(packageManager);
 
 			const { getRunExec, getRunExecStruct } = getRunExecFunctions(packageManager);
 

@@ -36,7 +36,9 @@ suite('Scripts', () => {
 					}
 				});
 
-				test('simple script run conflicting with package manager cli command', async ({ expect }) => {
+				test('simple script run conflicting with package manager cli command', async ({
+					expect,
+				}) => {
 					const packageManager = await getPackageManagerForTesting(pm);
 					// all the package managers have an 'install' command
 					const struct = packageManager.getRunScriptStruct('install');

@@ -42,7 +42,7 @@ class RunScriptStruct implements CommandScriptStruct {
 
 		const scriptCollidesWithCliKeyword = packageManager.cliCommandKeywords.has(script);
 		// if(scriptCollidesWithCliKeyword) console.log('collision');
-		if(scriptCollidesWithCliKeyword) return true;
+		if (scriptCollidesWithCliKeyword) return true;
 
 		return false;
 	}
@@ -75,7 +75,9 @@ export type GetRunScriptStruct = (
 	options?: Partial<GetRunScriptOptions>,
 ) => CommandScriptStruct | null;
 
-export function getRunScriptFunctions(packageManager: Pick<PackageManager, 'name' | 'cliCommandKeywords'>): {
+export function getRunScriptFunctions(
+	packageManager: Pick<PackageManager, 'name' | 'cliCommandKeywords'>,
+): {
 	getRunScript: GetRunScript;
 	getRunScriptStruct: GetRunScriptStruct;
 } {
