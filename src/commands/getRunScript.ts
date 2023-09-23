@@ -21,7 +21,7 @@ class RunScriptStruct implements CommandScriptStruct {
 
 		this.cmd = packageManager.name;
 		const includeRun = RunScriptStruct.#shouldRunKeywordBeIncluded(packageManager, script, format);
-		if(includeRun) {
+		if (includeRun) {
 			this.pmCommand = 'run';
 		}
 

@@ -25,19 +25,21 @@ class RunExecStruct implements CommandExecStruct {
 
 		this.cmd = packageManager.name;
 		this.structIsReady = new Promise((resolve) => {
-			RunExecStruct.#getPmKeywords(packageManager, command, format, download).then(({cmd, pmCommand}) => {
-				this.cmd = cmd;
-				this.pmCommand = pmCommand;
+			RunExecStruct.#getPmKeywords(packageManager, command, format, download).then(
+				({ cmd, pmCommand }) => {
+					this.cmd = cmd;
+					this.pmCommand = pmCommand;
 
-				if (['yarn', 'pnpm'].includes(packageManager.name) && pmCommand === 'exec') {
-					this.command = RunExecStruct.#unscopeCommand(this.command);
-				}
-				const isNpmExec = packageManager.name === 'npm' && this.pmCommand === 'exec';
-				if (isNpmExec) {
-					this.argsNeedDoubleDashes = true;
-				}
-				resolve();
-			});
+					if (['yarn', 'pnpm'].includes(packageManager.name) && pmCommand === 'exec') {
+						this.command = RunExecStruct.#unscopeCommand(this.command);
+					}
+					const isNpmExec = packageManager.name === 'npm' && this.pmCommand === 'exec';
+					if (isNpmExec) {
+						this.argsNeedDoubleDashes = true;
+					}
+					resolve();
+				},
+			);
 		});
 
 		this.argsNeedDoubleDashes = isYarnClassic(packageManager);
@@ -54,22 +56,22 @@ class RunExecStruct implements CommandExecStruct {
 		command: string,
 		format: 'short' | 'full',
 		download: DownloadPreference,
-	): Promise<{ cmd: string, pmCommand?: string}> {
+	): Promise<{ cmd: string; pmCommand?: string }> {
 		switch (packageManager.name) {
 			case 'bun':
-				return format === 'short' ? {cmd: 'bunx'} : {cmd: 'bun', pmCommand: 'x' };
+				return format === 'short' ? { cmd: 'bunx' } : { cmd: 'bun', pmCommand: 'x' };
 			case 'npm':
-				return format === 'short' ? {cmd: 'npx'} : {cmd: 'npm', pmCommand: 'exec' };
+				return format === 'short' ? { cmd: 'npx' } : { cmd: 'npm', pmCommand: 'exec' };
 			case 'yarn':
 				if (packageManager.version.startsWith('1.')) {
 					// yarn classic doesn't have dlx
-					return { cmd: 'yarn', pmCommand: 'exec'};
+					return { cmd: 'yarn', pmCommand: 'exec' };
 				}
 				break;
 			default:
 		}
 
-		const result: { cmd: string, pmCommand?: string} = {cmd: packageManager.name};
+		const result: { cmd: string; pmCommand?: string } = { cmd: packageManager.name };
 		// eslint-disable-next-line default-case
 		switch (download) {
 			case 'prefer-always':
