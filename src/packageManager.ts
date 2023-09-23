@@ -86,18 +86,27 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 		if (projectRootFiles.includes(lockFiles[packageManagerName])) {
 			const name = packageManagerName;
 			const version = await getPackageManagerVersion(packageManagerName);
-			const packageManager: Partial<PackageManager> = {
+			const packageManager: PackageManager = {
 				name: packageManagerName,
 				version,
+				// initialization of dummy fields which get populated in the next steps
+				cliCommandKeywords: new Set(),
+				getPackageInfo: async () => null,
+				getRunScript: () => null,
+				getRunScriptStruct: () => null,
+				getRunExec: async () => null,
+				getRunExecStruct: async () => null,
 			};
-			packageManager.cliCommandKeywords = getPmCliCommandKeywords(
-				packageManager as Pick<PackageManager, 'name' | 'version'>,
-			);
+
+			packageManager.cliCommandKeywords = getPmCliCommandKeywords(packageManager);
+
 			packageManager.getPackageInfo = getPackageInfoFunction({ name, version });
-			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(name);
-			const { getRunExec, getRunExecStruct } = getRunExecFunctions(
-				packageManager as Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
+
+			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(
+				packageManager
 			);
+
+			const { getRunExec, getRunExecStruct } = getRunExecFunctions(packageManager);
 
 			packageManager.getRunScript = getRunScript;
 			packageManager.getRunScriptStruct = getRunScriptStruct;
@@ -105,7 +114,7 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 			packageManager.getRunExec = getRunExec;
 			packageManager.getRunExecStruct = getRunExecStruct;
 
-			return packageManager as PackageManager;
+			return packageManager;
 		}
 	}
 
