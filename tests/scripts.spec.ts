@@ -22,10 +22,10 @@ suite('Scripts', () => {
 					const struct = packageManager.getRunScriptStruct('my-script');
 					expect(struct?.cmd).toEqual(pm);
 					const expectedPmCommand = pm === 'npm' ? 'run' : undefined;
-					expect(struct?.pmCommand).toEqual(expectedPmCommand);
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
 					expect(struct?.script).toEqual('my-script');
 					expect('command' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual([]);
+					expect(struct?.targetArgs).toEqual([]);
 
 					if (pm === 'npm') {
 						expect(`${struct}`).toEqual(`${pm} run my-script`);
@@ -41,10 +41,10 @@ suite('Scripts', () => {
 					// all the package managers have an 'install' command
 					const struct = packageManager.getRunScriptStruct('install');
 					expect(struct?.cmd).toEqual(pm);
-					expect(struct?.pmCommand).toEqual('run');
+					expect(struct?.pmCmd).toEqual('run');
 					expect(struct?.script).toEqual('install');
 					expect('command' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual([]);
+					expect(struct?.targetArgs).toEqual([]);
 					expect(`${struct}`).toEqual(`${pm} run install`);
 				});
 
@@ -55,10 +55,10 @@ suite('Scripts', () => {
 					});
 					expect(struct?.cmd).toEqual(pm);
 					const expectedPmCommand = pm === 'npm' ? 'run' : undefined;
-					expect(struct?.pmCommand).toEqual(expectedPmCommand);
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
 					expect(struct?.script).toEqual('my-script');
 					expect('command' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual(['--help', '-v']);
+					expect(struct?.targetArgs).toEqual(['--help', '-v']);
 
 					if (pm === 'npm') {
 						expect(`${struct}`).toEqual(`${pm} run my-script -- --help -v`);
@@ -76,10 +76,10 @@ suite('Scripts', () => {
 					});
 					expect(struct?.cmd).toEqual(pm);
 					const expectedPmCommand = pm === 'npm' ? 'run' : undefined;
-					expect(struct?.pmCommand).toEqual(expectedPmCommand);
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
 					expect(struct?.script).toEqual('my-script');
 					expect('command' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual(['--env', 'test', '--message "this is a message"']);
+					expect(struct?.targetArgs).toEqual(['--env', 'test', '--message "this is a message"']);
 
 					if (pm === 'npm') {
 						expect(`${struct}`).toEqual(
@@ -101,10 +101,10 @@ suite('Scripts', () => {
 					});
 					expect(struct?.cmd).toEqual(pm);
 					const expectedPmCommand = pm === 'npm' ? 'run' : undefined;
-					expect(struct?.pmCommand).toEqual(expectedPmCommand);
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
 					expect(struct?.script).toEqual('compute');
 					expect('command' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual(['5', '10', '--operation', 'multiply']);
+					expect(struct?.targetArgs).toEqual(['5', '10', '--operation', 'multiply']);
 
 					if (pm === 'npm') {
 						expect(`${struct}`).toEqual(`${pm} run compute -- 5 10 --operation multiply`);
@@ -121,10 +121,10 @@ suite('Scripts', () => {
 					const packageManager = await getPackageManagerForTesting(pm);
 					const struct = packageManager.getRunScriptStruct('my-script', { format: 'full' });
 					expect(struct?.cmd).toEqual(pm);
-					expect(struct?.pmCommand).toEqual('run');
+					expect(struct?.pmCmd).toEqual('run');
 					expect(struct?.script).toEqual('my-script');
 					expect('command' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual([]);
+					expect(struct?.targetArgs).toEqual([]);
 
 					expect(`${struct}`).toEqual(`${pm} run my-script`);
 				});
@@ -136,10 +136,10 @@ suite('Scripts', () => {
 						format: 'full',
 					});
 					expect(struct?.cmd).toEqual(pm);
-					expect(struct?.pmCommand).toEqual('run');
+					expect(struct?.pmCmd).toEqual('run');
 					expect(struct?.script).toEqual('my-script');
 					expect('command' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual(['--help', '-v']);
+					expect(struct?.targetArgs).toEqual(['--help', '-v']);
 
 					if (['npm', 'bun'].includes(pm)) {
 						expect(`${struct}`).toEqual(`${pm} run my-script -- --help -v`);
@@ -155,10 +155,10 @@ suite('Scripts', () => {
 						format: 'full',
 					});
 					expect(struct?.cmd).toEqual(pm);
-					expect(struct?.pmCommand).toEqual('run');
+					expect(struct?.pmCmd).toEqual('run');
 					expect(struct?.script).toEqual('my-script');
 					expect('command' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual(['--env', 'test', '--message "this is a message"']);
+					expect(struct?.targetArgs).toEqual(['--env', 'test', '--message "this is a message"']);
 
 					if (['npm', 'bun'].includes(pm)) {
 						expect(`${struct}`).toEqual(
@@ -178,10 +178,10 @@ suite('Scripts', () => {
 						format: 'full',
 					});
 					expect(struct?.cmd).toEqual(pm);
-					expect(struct?.pmCommand).toEqual('run');
+					expect(struct?.pmCmd).toEqual('run');
 					expect(struct?.script).toEqual('compute');
 					expect('command' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual(['5', '10', '--operation', 'multiply']);
+					expect(struct?.targetArgs).toEqual(['5', '10', '--operation', 'multiply']);
 
 					if (['npm', 'bun'].includes(pm)) {
 						expect(`${struct}`).toEqual(`${pm} run compute -- 5 10 --operation multiply`);

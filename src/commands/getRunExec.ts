@@ -7,33 +7,33 @@ class RunExecStruct implements CommandExecStruct {
 
 	cmd: string;
 
-	pmCommand?: string = undefined;
+	pmCmd?: string = undefined;
 
-	args: string[];
+	targetArgs: string[];
 
 	argsNeedDoubleDashes: boolean;
 
 	constructor(
 		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
-		public command: string,
+		public pkgCmd: string,
 		options?: Partial<GetRunExecOptions>,
 	) {
-		this.args = options?.args ?? [];
+		this.targetArgs = options?.args ?? [];
 
 		const format = options?.format ?? 'short';
 		const download = options?.download ?? 'prefer-always';
 
 		this.cmd = packageManager.name;
 		this.structIsReady = new Promise((resolve) => {
-			RunExecStruct.#getPmKeywords(packageManager, command, format, download).then(
-				({ cmd, pmCommand }) => {
+			RunExecStruct.#getPmKeywords(packageManager, pkgCmd, format, download).then(
+				({ cmd, pmCmd }) => {
 					this.cmd = cmd;
-					this.pmCommand = pmCommand;
+					this.pmCmd = pmCmd;
 
-					if (['yarn', 'pnpm'].includes(packageManager.name) && pmCommand === 'exec') {
-						this.command = RunExecStruct.#unscopeCommand(this.command);
+					if (['yarn', 'pnpm'].includes(packageManager.name) && pmCmd === 'exec') {
+						this.pkgCmd = RunExecStruct.#unscopeCommand(this.pkgCmd);
 					}
-					const isNpmExec = packageManager.name === 'npm' && this.pmCommand === 'exec';
+					const isNpmExec = packageManager.name === 'npm' && this.pmCmd === 'exec';
 					if (isNpmExec) {
 						this.argsNeedDoubleDashes = true;
 					}
@@ -45,9 +45,18 @@ class RunExecStruct implements CommandExecStruct {
 		this.argsNeedDoubleDashes = isYarnClassic(packageManager);
 	}
 
+	get cmdArgs(): string[] {
+		return [
+			...(this.pmCmd ? [this.pmCmd] : []),
+			this.pkgCmd,
+			...(this.targetArgs.length && this.argsNeedDoubleDashes ? ['--'] : []),
+			...(this.targetArgs)
+		];
+	}
+
 	toString(): string {
-		return `${this.cmd}${this.pmCommand ? ` ${this.pmCommand}` : ''} ${this.command}${
-			this.args.length ? `${this.argsNeedDoubleDashes ? ' --' : ''} ${this.args.join(' ')}` : ''
+		return `${this.cmd}${this.pmCmd ? ` ${this.pmCmd}` : ''} ${this.pkgCmd}${
+			this.targetArgs.length ? `${this.argsNeedDoubleDashes ? ' --' : ''} ${this.targetArgs.join(' ')}` : ''
 		}`;
 	}
 
@@ -56,33 +65,33 @@ class RunExecStruct implements CommandExecStruct {
 		command: string,
 		format: 'short' | 'full',
 		download: DownloadPreference,
-	): Promise<{ cmd: string; pmCommand?: string }> {
+	): Promise<{ cmd: string; pmCmd?: string }> {
 		switch (packageManager.name) {
 			case 'bun':
-				return format === 'short' ? { cmd: 'bunx' } : { cmd: 'bun', pmCommand: 'x' };
+				return format === 'short' ? { cmd: 'bunx' } : { cmd: 'bun', pmCmd: 'x' };
 			case 'npm':
-				return format === 'short' ? { cmd: 'npx' } : { cmd: 'npm', pmCommand: 'exec' };
+				return format === 'short' ? { cmd: 'npx' } : { cmd: 'npm', pmCmd: 'exec' };
 			case 'yarn':
 				if (packageManager.version.startsWith('1.')) {
 					// yarn classic doesn't have dlx
-					return { cmd: 'yarn', pmCommand: 'exec' };
+					return { cmd: 'yarn', pmCmd: 'exec' };
 				}
 				break;
 			default:
 		}
 
-		const result: { cmd: string; pmCommand?: string } = { cmd: packageManager.name };
+		const result: { cmd: string; pmCmd?: string } = { cmd: packageManager.name };
 		// eslint-disable-next-line default-case
 		switch (download) {
 			case 'prefer-always':
-				result.pmCommand = 'dlx';
+				result.pmCmd = 'dlx';
 				break;
 			case 'prefer-never':
-				result.pmCommand = 'exec';
+				result.pmCmd = 'exec';
 				break;
 			case 'prefer-if-needed': {
 				const isPackageInstalled = await packageManager.getPackageInfo(command);
-				result.pmCommand = isPackageInstalled ? 'exec' : 'dlx';
+				result.pmCmd = isPackageInstalled ? 'exec' : 'dlx';
 				break;
 			}
 		}
