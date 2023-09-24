@@ -52,7 +52,7 @@ console.log(packageManager.version);
 
 `packageManager.getPackageInfo` allows you to get the information regarding a locally installed package that your client application is using, it can for example be used to make sure your user's application has a certain dependency or to gather and display the package version of such dependency.
 
-#### Example
+For example:
 
 ```js
 const zodPackage = await packageManager.getPackageInfo('zod');
@@ -70,30 +70,56 @@ if (zodPackage) {
 
 `packageManager.getRunScript` let's you create a command that can be used to run a script defined in the package.json file.
 
-> For more advanced use cases you can use `packageManager.getRunScriptStruct` to obtain an object representing the command and extract whatever information you need from that
-
-#### Example
+For example:
 
 ```js
-const runBuildCommand = packageManager.getRunScript('build', {
+const buildStr = packageManager.getRunScript('build', {
 	args: ['./dist', '--verbose'],
 });
 
-exec(runBuildCommand);
+console.log(`To build your application run: ${buildStr}`);
+```
+
+If you need more fine grained control over the command you can use its `packageManager.getRunScriptStruct` alternative to obtain an object representing the command.
+
+For example:
+
+```js
+import { spawn } from 'child_process';
+
+const buildCmd = packageManager.getRunScriptStruct('build', {
+	args: ['./dist', '--verbose'],
+});
+
+// run the command for the user
+spawn(buildCmd.cmd, buildCmd.cmdArgs);
 ```
 
 ### getRunExec
 
 `packageManager.getRunExec` let's you create a command that can be used to execute a command from a target package (which may or may not be locally installed).
 
-> For more advanced use cases you can use `packageManager.getRunExecStruct` to obtain an object representing the command and extract whatever information you need from that
-
-#### Example
+For example:
 
 ```js
-const eslintCommand = packageManager.getRunExec('eslint', {
+const eslintStr = packageManager.getRunExec('eslint', {
 	args: ['./src', '--quiet'],
 });
 
-exec(eslintCommand);
+console.log(`To run eslint on your application run: ${eslintStr}`);
+```
+
+If you need more fine grained control over the command you can use its `packageManager.getRunExecStruct` alternative to obtain an object representing the command.
+
+For example:
+
+```js
+import { spawn } from 'child_process';
+
+const eslintCmd = packageManager.getRunExec('eslint', {
+	args: ['./src', '--quiet'],
+});
+
+// run the command for the user
+spawn(eslintCmd.cmd, eslintCmd.cmdArgs);
 ```

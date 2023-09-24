@@ -31,16 +31,30 @@ suite('Exec', () => {
 				test('simple exec run with default options', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
 					const struct = await packageManager.getRunExecStruct('eslint');
-					const expectedPmKeys = {
-						npm: ['npx'],
-						yarn: ['yarn', 'dlx'],
-						pnpm: ['pnpm', 'dlx'],
-						bun: ['bunx'],
+					const expectedCmd = {
+						npm: 'npx',
+						yarn: 'yarn',
+						pnpm: 'pnpm',
+						bun: 'bunx',
 					}[pm];
-					expect(struct?.pmKeywords).toEqual(expectedPmKeys);
-					expect(struct?.command).toEqual('eslint');
+					expect(struct?.cmd).toEqual(expectedCmd);
+					const expectedPmCommand = {
+						npm: undefined,
+						yarn: 'dlx',
+						pnpm: 'dlx',
+						bun: undefined,
+					}[pm];
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
+					expect(struct?.pkgCmd).toEqual('eslint');
+					const expectedCmdArgs = {
+						npm: ['eslint'],
+						yarn: ['dlx', 'eslint'],
+						pnpm: ['dlx', 'eslint'],
+						bun: ['eslint'],
+					}[pm];
+					expect(struct?.cmdArgs).toEqual(expectedCmdArgs);
 					expect('script' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual([]);
+					expect(struct?.targetArgs).toEqual([]);
 
 					const expectedStr = {
 						npm: 'npx eslint',
@@ -54,16 +68,30 @@ suite('Exec', () => {
 				test('simple exec run with full format', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
 					const struct = await packageManager.getRunExecStruct('eslint', { format: 'full' });
-					const expectedPmKeys = {
-						npm: ['npm', 'exec'],
-						yarn: ['yarn', 'dlx'],
-						pnpm: ['pnpm', 'dlx'],
-						bun: ['bun', 'x'],
+					const expectedCmd = {
+						npm: 'npm',
+						yarn: 'yarn',
+						pnpm: 'pnpm',
+						bun: 'bun',
 					}[pm];
-					expect(struct?.pmKeywords).toEqual(expectedPmKeys);
-					expect(struct?.command).toEqual('eslint');
+					expect(struct?.cmd).toEqual(expectedCmd);
+					const expectedPmCommand = {
+						npm: 'exec',
+						yarn: 'dlx',
+						pnpm: 'dlx',
+						bun: 'x',
+					}[pm];
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
+					expect(struct?.pkgCmd).toEqual('eslint');
+					const expectedCmdArgs = {
+						npm: ['exec', 'eslint'],
+						yarn: ['dlx', 'eslint'],
+						pnpm: ['dlx', 'eslint'],
+						bun: ['x', 'eslint'],
+					}[pm];
+					expect(struct?.cmdArgs).toEqual(expectedCmdArgs);
 					expect('script' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual([]);
+					expect(struct?.targetArgs).toEqual([]);
 
 					const expectedStr = {
 						npm: 'npm exec eslint',
@@ -79,16 +107,30 @@ suite('Exec', () => {
 					const struct = await packageManager.getRunExecStruct('eslint', {
 						download: 'prefer-never',
 					});
-					const expectedPmKeys = {
-						npm: ['npx'],
-						yarn: ['yarn', 'exec'],
-						pnpm: ['pnpm', 'exec'],
-						bun: ['bunx'],
+					const expectedCmd = {
+						npm: 'npx',
+						yarn: 'yarn',
+						pnpm: 'pnpm',
+						bun: 'bunx',
 					}[pm];
-					expect(struct?.pmKeywords).toEqual(expectedPmKeys);
-					expect(struct?.command).toEqual('eslint');
+					expect(struct?.cmd).toEqual(expectedCmd);
+					const expectedPmCommand = {
+						npm: undefined,
+						yarn: 'exec',
+						pnpm: 'exec',
+						bun: undefined,
+					}[pm];
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
+					expect(struct?.pkgCmd).toEqual('eslint');
+					const expectedCmdArgs = {
+						npm: ['eslint'],
+						yarn: ['exec', 'eslint'],
+						pnpm: ['exec', 'eslint'],
+						bun: ['eslint'],
+					}[pm];
+					expect(struct?.cmdArgs).toEqual(expectedCmdArgs);
 					expect('script' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual([]);
+					expect(struct?.targetArgs).toEqual([]);
 
 					const expectedStr = {
 						npm: 'npx eslint',
@@ -106,16 +148,30 @@ suite('Exec', () => {
 						const struct = await packageManager.getRunExecStruct('eslint', {
 							download: 'prefer-if-needed',
 						});
-						const expectedPmKeys = {
-							npm: ['npx'],
-							yarn: ['yarn', 'dlx'],
-							pnpm: ['pnpm', 'dlx'],
-							bun: ['bunx'],
+						const expectedCmd = {
+							npm: 'npx',
+							yarn: 'yarn',
+							pnpm: 'pnpm',
+							bun: 'bunx',
 						}[pm];
-						expect(struct?.pmKeywords).toEqual(expectedPmKeys);
-						expect(struct?.command).toEqual('eslint');
+						expect(struct?.cmd).toEqual(expectedCmd);
+						const expectedPmCommand = {
+							npm: undefined,
+							yarn: 'dlx',
+							pnpm: 'dlx',
+							bun: undefined,
+						}[pm];
+						expect(struct?.pmCmd).toEqual(expectedPmCommand);
+						expect(struct?.pkgCmd).toEqual('eslint');
+						const expectedCmdArgs = {
+							npm: ['eslint'],
+							yarn: ['dlx', 'eslint'],
+							pnpm: ['dlx', 'eslint'],
+							bun: ['eslint'],
+						}[pm];
+						expect(struct?.cmdArgs).toEqual(expectedCmdArgs);
 						expect('script' in (struct ?? {})).toBe(false);
-						expect(struct?.args).toEqual([]);
+						expect(struct?.targetArgs).toEqual([]);
 
 						const expectedStr = {
 							npm: 'npx eslint',
@@ -132,16 +188,30 @@ suite('Exec', () => {
 						const struct = await packageManager.getRunExecStruct('eslint', {
 							download: 'prefer-if-needed',
 						});
-						const expectedPmKeys = {
-							npm: ['npx'],
-							yarn: ['yarn', 'exec'],
-							pnpm: ['pnpm', 'exec'],
-							bun: ['bunx'],
+						const expectedCmd = {
+							npm: 'npx',
+							yarn: 'yarn',
+							pnpm: 'pnpm',
+							bun: 'bunx',
 						}[pm];
-						expect(struct?.pmKeywords).toEqual(expectedPmKeys);
-						expect(struct?.command).toEqual('eslint');
+						expect(struct?.cmd).toEqual(expectedCmd);
+						const expectedPmCommand = {
+							npm: undefined,
+							yarn: 'exec',
+							pnpm: 'exec',
+							bun: undefined,
+						}[pm];
+						expect(struct?.pmCmd).toEqual(expectedPmCommand);
+						expect(struct?.pkgCmd).toEqual('eslint');
+						const expectedCmdArgs = {
+							npm: ['eslint'],
+							yarn: ['exec', 'eslint'],
+							pnpm: ['exec', 'eslint'],
+							bun: ['eslint'],
+						}[pm];
+						expect(struct?.cmdArgs).toEqual(expectedCmdArgs);
 						expect('script' in (struct ?? {})).toBe(false);
-						expect(struct?.args).toEqual([]);
+						expect(struct?.targetArgs).toEqual([]);
 
 						const expectedStr = {
 							npm: 'npx eslint',
@@ -161,22 +231,36 @@ suite('Exec', () => {
 						download: 'prefer-never',
 					});
 
-					const expectedPmKeys = {
-						npm: ['npx'],
-						yarn: ['yarn', 'exec'],
-						pnpm: ['pnpm', 'exec'],
-						bun: ['bunx'],
-					}[pm];
-					expect(struct?.pmKeywords).toEqual(expectedPmKeys);
 					const expectedCmd = {
+						npm: 'npx',
+						yarn: 'yarn',
+						pnpm: 'pnpm',
+						bun: 'bunx',
+					}[pm];
+					expect(struct?.cmd).toEqual(expectedCmd);
+					const expectedPmCommand = {
+						npm: undefined,
+						yarn: 'exec',
+						pnpm: 'exec',
+						bun: undefined,
+					}[pm];
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
+					const expectedCommand = {
 						npm: '@org/cmd',
 						yarn: 'cmd',
 						pnpm: 'cmd',
 						bun: '@org/cmd',
 					}[pm];
-					expect(struct?.command).toEqual(expectedCmd);
+					expect(struct?.pkgCmd).toEqual(expectedCommand);
+					const expectedCmdArgs = {
+						npm: ['@org/cmd'],
+						yarn: ['exec', 'cmd'],
+						pnpm: ['exec', 'cmd'],
+						bun: ['@org/cmd'],
+					}[pm];
+					expect(struct?.cmdArgs).toEqual(expectedCmdArgs);
 					expect('script' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual([]);
+					expect(struct?.targetArgs).toEqual([]);
 
 					const expectedStr = {
 						npm: 'npx @org/cmd',
@@ -193,16 +277,30 @@ suite('Exec', () => {
 						download: 'prefer-always',
 					});
 
-					const expectedPmKeys = {
-						npm: ['npx'],
-						yarn: ['yarn', 'dlx'],
-						pnpm: ['pnpm', 'dlx'],
-						bun: ['bunx'],
+					const expectedCmd = {
+						npm: 'npx',
+						yarn: 'yarn',
+						pnpm: 'pnpm',
+						bun: 'bunx',
 					}[pm];
-					expect(struct?.pmKeywords).toEqual(expectedPmKeys);
-					expect(struct?.command).toEqual('@org/cmd');
+					expect(struct?.cmd).toEqual(expectedCmd);
+					const expectedPmCommand = {
+						npm: undefined,
+						yarn: 'dlx',
+						pnpm: 'dlx',
+						bun: undefined,
+					}[pm];
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
+					expect(struct?.pkgCmd).toEqual('@org/cmd');
+					const expectedCmdArgs = {
+						npm: ['@org/cmd'],
+						yarn: ['dlx', '@org/cmd'],
+						pnpm: ['dlx', '@org/cmd'],
+						bun: ['@org/cmd'],
+					}[pm];
+					expect(struct?.cmdArgs).toEqual(expectedCmdArgs);
 					expect('script' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual([]);
+					expect(struct?.targetArgs).toEqual([]);
 
 					const expectedStr = {
 						npm: 'npx @org/cmd',
@@ -222,16 +320,30 @@ suite('Exec', () => {
 							args: ['.', '--fix'],
 						});
 
-						const expectedPmKeys = {
-							npm: ['npx'],
-							yarn: ['yarn', 'dlx'],
-							pnpm: ['pnpm', 'dlx'],
-							bun: ['bunx'],
+						const expectedCmd = {
+							npm: 'npx',
+							yarn: 'yarn',
+							pnpm: 'pnpm',
+							bun: 'bunx',
 						}[pm];
-						expect(struct?.pmKeywords).toEqual(expectedPmKeys);
-						expect(struct?.command).toEqual('eslint');
+						expect(struct?.cmd).toEqual(expectedCmd);
+						const expectedPmCommand = {
+							npm: undefined,
+							yarn: 'dlx',
+							pnpm: 'dlx',
+							bun: undefined,
+						}[pm];
+						expect(struct?.pmCmd).toEqual(expectedPmCommand);
+						expect(struct?.pkgCmd).toEqual('eslint');
+						const expectedCmdArgs = {
+							npm: ['eslint', '.', '--fix'],
+							yarn: ['dlx', 'eslint', '.', '--fix'],
+							pnpm: ['dlx', 'eslint', '.', '--fix'],
+							bun: ['eslint', '.', '--fix'],
+						}[pm];
+						expect(struct?.cmdArgs).toEqual(expectedCmdArgs);
 						expect('script' in (struct ?? {})).toBe(false);
-						expect(struct?.args).toEqual(['.', '--fix']);
+						expect(struct?.targetArgs).toEqual(['.', '--fix']);
 
 						const expectedStr = {
 							npm: 'npx eslint . --fix',
@@ -250,16 +362,30 @@ suite('Exec', () => {
 						args: ['.', '--fix'],
 					});
 
-					const expectedPmKeys = {
-						npm: ['npm', 'exec'],
-						yarn: ['yarn', 'dlx'],
-						pnpm: ['pnpm', 'dlx'],
-						bun: ['bun', 'x'],
+					const expectedCmd = {
+						npm: 'npm',
+						yarn: 'yarn',
+						pnpm: 'pnpm',
+						bun: 'bun',
 					}[pm];
-					expect(struct?.pmKeywords).toEqual(expectedPmKeys);
-					expect(struct?.command).toEqual('eslint');
+					expect(struct?.cmd).toEqual(expectedCmd);
+					const expectedPmCommand = {
+						npm: 'exec',
+						yarn: 'dlx',
+						pnpm: 'dlx',
+						bun: 'x',
+					}[pm];
+					expect(struct?.pmCmd).toEqual(expectedPmCommand);
+					expect(struct?.pkgCmd).toEqual('eslint');
+					const expectedCmdArgs = {
+						npm: ['exec', 'eslint', '--', '.', '--fix'],
+						yarn: ['dlx', 'eslint', '.', '--fix'],
+						pnpm: ['dlx', 'eslint', '.', '--fix'],
+						bun: ['x', 'eslint', '.', '--fix'],
+					}[pm];
+					expect(struct?.cmdArgs).toEqual(expectedCmdArgs);
 					expect('script' in (struct ?? {})).toBe(false);
-					expect(struct?.args).toEqual(['.', '--fix']);
+					expect(struct?.targetArgs).toEqual(['.', '--fix']);
 
 					const expectedStr = {
 						npm: 'npm exec eslint -- . --fix',
@@ -290,10 +416,12 @@ suite('Exec', () => {
 				download: 'prefer-always',
 			});
 
-			expect(struct?.pmKeywords).toEqual(['yarn', 'exec']);
-			expect(struct?.command).toEqual('eslint');
+			expect(struct?.cmd).toEqual('yarn');
+			expect(struct?.pmCmd).toEqual('exec');
+			expect(struct?.pkgCmd).toEqual('eslint');
+			expect(struct?.cmdArgs).toEqual(['exec', 'eslint']);
 			expect('script' in (struct ?? {})).toBe(false);
-			expect(struct?.args).toEqual([]);
+			expect(struct?.targetArgs).toEqual([]);
 
 			expect(`${struct}`).toEqual('yarn exec eslint');
 		});
@@ -303,10 +431,12 @@ suite('Exec', () => {
 				args: ['.', '--fix'],
 			});
 
-			expect(struct?.pmKeywords).toEqual(['yarn', 'exec']);
-			expect(struct?.command).toEqual('eslint');
+			expect(struct?.cmd).toEqual('yarn');
+			expect(struct?.pmCmd).toEqual('exec');
+			expect(struct?.pkgCmd).toEqual('eslint');
+			expect(struct?.cmdArgs).toEqual(['exec', 'eslint', '--', '.', '--fix']);
 			expect('script' in (struct ?? {})).toBe(false);
-			expect(struct?.args).toEqual(['.', '--fix']);
+			expect(struct?.targetArgs).toEqual(['.', '--fix']);
 
 			expect(`${struct}`).toEqual('yarn exec eslint -- . --fix');
 		});

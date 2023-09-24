@@ -2,9 +2,11 @@ import type { PackageManager } from '../packageManager';
 import type { CommandScriptStruct } from './CommandStruct';
 
 class RunScriptStruct implements CommandScriptStruct {
-	pmKeywords: string[];
+	cmd: string;
 
-	args: string[];
+	pmCmd?: string = undefined;
+
+	targetArgs: string[];
 
 	argsNeedDoubleDashes: boolean;
 
@@ -13,19 +15,33 @@ class RunScriptStruct implements CommandScriptStruct {
 		public script: string,
 		options?: Partial<GetRunScriptOptions>,
 	) {
-		this.args = options?.args ?? [];
+		this.targetArgs = options?.args ?? [];
 
 		const format = options?.format ?? 'short';
 
+		this.cmd = packageManager.name;
 		const includeRun = RunScriptStruct.#shouldRunKeywordBeIncluded(packageManager, script, format);
-		this.pmKeywords = [packageManager.name, ...(includeRun ? ['run'] : [])];
+		if (includeRun) {
+			this.pmCmd = 'run';
+		}
 
 		this.argsNeedDoubleDashes = ['npm', 'bun'].includes(packageManager.name);
 	}
 
+	get cmdArgs(): string[] {
+		return [
+			...(this.pmCmd ? [this.pmCmd] : []),
+			this.script,
+			...(this.targetArgs.length && this.argsNeedDoubleDashes ? ['--'] : []),
+			...this.targetArgs,
+		];
+	}
+
 	toString(): string {
-		return `${this.pmKeywords.join(' ')} ${this.script}${
-			this.args.length ? `${this.argsNeedDoubleDashes ? ' --' : ''} ${this.args.join(' ')}` : ''
+		return `${this.cmd}${this.pmCmd ? ` ${this.pmCmd}` : ''} ${this.script}${
+			this.targetArgs.length
+				? `${this.argsNeedDoubleDashes ? ' --' : ''} ${this.targetArgs.join(' ')}`
+				: ''
 		}`;
 	}
 
