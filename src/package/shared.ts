@@ -10,7 +10,8 @@ type NpmListOutputJsonDependency = {
 type NpmListOutputJson = {
 	version: string;
 	name: string;
-	dependencies: Record<string, NpmListOutputJsonDependency>;
+	dependencies?: Record<string, NpmListOutputJsonDependency>;
+	devDependencies?: Record<string, NpmListOutputJsonDependency>;
 };
 
 export function getNpmOrPnpmGetPackageInfoFunction(
@@ -23,7 +24,7 @@ export function getNpmOrPnpmGetPackageInfoFunction(
 			);
 
 			const info: NpmListOutputJson = packageManager === 'npm' ? outputJson : outputJson[0];
-			const packageInfo = info.dependencies[name];
+			const packageInfo = info.dependencies?.[name] ?? info.devDependencies?.[name];
 
 			if (!packageInfo) {
 				return null;
