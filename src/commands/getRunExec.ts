@@ -50,13 +50,15 @@ class RunExecStruct implements CommandExecStruct {
 			...(this.pmCmd ? [this.pmCmd] : []),
 			this.pkgCmd,
 			...(this.targetArgs.length && this.argsNeedDoubleDashes ? ['--'] : []),
-			...(this.targetArgs)
+			...this.targetArgs,
 		];
 	}
 
 	toString(): string {
 		return `${this.cmd}${this.pmCmd ? ` ${this.pmCmd}` : ''} ${this.pkgCmd}${
-			this.targetArgs.length ? `${this.argsNeedDoubleDashes ? ' --' : ''} ${this.targetArgs.join(' ')}` : ''
+			this.targetArgs.length
+				? `${this.argsNeedDoubleDashes ? ' --' : ''} ${this.targetArgs.join(' ')}`
+				: ''
 		}`;
 	}
 
