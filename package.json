@@ -1,6 +1,6 @@
 {
 	"name": "package-manager-manager",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Utilities for managing package managers.",
 	"license": "MIT",
 	"author": "Dario, James",
