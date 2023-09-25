@@ -1,5 +1,11 @@
 # package-manager-manager
 
+## 0.1.1
+
+### Patch Changes
+
+- a59865b: make sure devDependecies are taken into consideration for npm/pnpm getPackageInfo functions
+
 ## 0.1.0
 
 ### Minor Changes
