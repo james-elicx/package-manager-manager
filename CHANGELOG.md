@@ -1,5 +1,12 @@
 # package-manager-manager
 
+## 0.1.2
+
+### Patch Changes
+
+- 1cfd3b9: in `pnpm`'s implementation of `getPackageInfo` don't use the json version of `pnpm list`
+  as that has proven not to be reliable
+
 ## 0.1.1
 
 ### Patch Changes
