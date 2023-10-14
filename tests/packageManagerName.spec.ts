@@ -94,4 +94,24 @@ suite('PackageManager name', () => {
 			});
 		});
 	});
+
+	describe('alongside project package manager', () => {
+		afterEach(() => mockFs.restore());
+
+		test('npm detection in pnpm project', async () => {
+			process.env['npm_config_user_agent'] = 'npm/8.5.0 node/v16.14.2 linux x64 workspaces/false';
+			await setupFsForTesting('pnpm');
+			const packageManager = await getPackageManager();
+			expect(packageManager?.name).toEqual('npm');
+			expect(packageManager?.projectPackageManager).toEqual('pnpm');
+		});
+
+		test('bun detection in npm project', async () => {
+			process.env['npm_config_user_agent'] = 'bun/0.7.3 npm/? node/v18.15.0 linux x64';
+			await setupFsForTesting('npm');
+			const packageManager = await getPackageManager();
+			expect(packageManager?.name).toEqual('bun');
+			expect(packageManager?.projectPackageManager).toEqual('npm');
+		});
+	});
 });
