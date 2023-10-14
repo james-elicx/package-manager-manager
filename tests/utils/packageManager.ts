@@ -22,6 +22,7 @@ export async function getPackageManagerForTesting(
 		}
 		setTerminalOutput(version);
 	}
+	process.env['npm_config_user_agent'] = `${pm}/v node/v linux`;
 	await setupFsForTesting(pm);
 	const packageManager = await getPackageManager();
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
