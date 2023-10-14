@@ -92,8 +92,8 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 				// initialization of dummy fields which get populated in the next steps
 				cliCommandKeywords: new Set(),
 				getPackageInfo: async () => null,
-				getRunScript: () => null,
-				getRunScriptStruct: () => null,
+				getRunScript: async () => null,
+				getRunScriptStruct: async () => null,
 				getRunExec: async () => null,
 				getRunExecStruct: async () => null,
 			};

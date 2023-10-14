@@ -83,12 +83,12 @@ export type GetRunScriptOptions = {
 export type GetRunScript = (
 	script: string,
 	options?: Partial<GetRunScriptOptions>,
-) => string | null;
+) => Promise<string | null>;
 
 export type GetRunScriptStruct = (
 	script: string,
 	options?: Partial<GetRunScriptOptions>,
-) => CommandScriptStruct | null;
+) => Promise<CommandScriptStruct | null>;
 
 export function getRunScriptFunctions(
 	packageManager: Pick<PackageManager, 'name' | 'cliCommandKeywords'>,
@@ -96,12 +96,13 @@ export function getRunScriptFunctions(
 	getRunScript: GetRunScript;
 	getRunScriptStruct: GetRunScriptStruct;
 } {
-	const getRunScriptStruct: GetRunScriptStruct = (script, options) => {
+	const getRunScriptStruct: GetRunScriptStruct = async (script, options) => {
 		if (!script) return null;
 		return new RunScriptStruct(packageManager, script, options);
 	};
 
-	const getRunScript: GetRunScript = (...args) => getRunScriptStruct(...args)?.toString() ?? null;
+	const getRunScript: GetRunScript = async (...args) =>
+		(await getRunScriptStruct(...args))?.toString() ?? null;
 
 	return { getRunScript, getRunScriptStruct };
 }
