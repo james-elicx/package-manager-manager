@@ -43,6 +43,7 @@
 		"test:e2e": "vitest run --dir=e2e --no-threads",
 		"test:coverage": "vitest run --coverage",
 		"alter-version": "node ./scripts/alter-version.js",
+		"changeset": "changeset",
 		"release": "changeset publish"
 	},
 	"devDependencies": {
