@@ -12,14 +12,14 @@ suite('Scripts', () => {
 
 		test('empty script generates null', async ({ expect }) => {
 			const packageManager = await getPackageManagerForTesting('npm');
-			expect(packageManager.getRunScriptStruct('')).toBe(null);
+			expect(await packageManager.getRunScriptStruct('')).toBe(null);
 		});
 
 		(['npm', 'yarn', 'pnpm', 'bun'] as const).forEach((pm) => {
 			describe(`${pm} (short/default format)`, () => {
 				test('simple script run', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
-					const struct = packageManager.getRunScriptStruct('my-script');
+					const struct = await packageManager.getRunScriptStruct('my-script');
 					expect(struct?.cmd).toEqual(pm);
 					const expectedPmCommand = pm === 'npm' ? 'run' : undefined;
 					expect(struct?.pmCmd).toEqual(expectedPmCommand);
@@ -46,7 +46,7 @@ suite('Scripts', () => {
 				}) => {
 					const packageManager = await getPackageManagerForTesting(pm);
 					// all the package managers have an 'install' command
-					const struct = packageManager.getRunScriptStruct('install');
+					const struct = await packageManager.getRunScriptStruct('install');
 					expect(struct?.cmd).toEqual(pm);
 					expect(struct?.pmCmd).toEqual('run');
 					expect(struct?.script).toEqual('install');
@@ -58,7 +58,7 @@ suite('Scripts', () => {
 
 				test('script run with simple arguments', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
-					const struct = packageManager.getRunScriptStruct('my-script', {
+					const struct = await packageManager.getRunScriptStruct('my-script', {
 						args: ['--help', '-v'],
 					});
 					expect(struct?.cmd).toEqual(pm);
@@ -86,7 +86,7 @@ suite('Scripts', () => {
 
 				test('script run with parametrized arguments', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
-					const struct = packageManager.getRunScriptStruct('my-script', {
+					const struct = await packageManager.getRunScriptStruct('my-script', {
 						args: ['--env', 'test', '--message "this is a message"'],
 					});
 					expect(struct?.cmd).toEqual(pm);
@@ -118,7 +118,7 @@ suite('Scripts', () => {
 
 				test('simple script run with positional and flag arguments', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
-					const struct = packageManager.getRunScriptStruct('compute', {
+					const struct = await packageManager.getRunScriptStruct('compute', {
 						args: ['5', '10', '--operation', 'multiply'],
 					});
 					expect(struct?.cmd).toEqual(pm);
@@ -148,7 +148,7 @@ suite('Scripts', () => {
 			describe(`${pm} (full format)`, () => {
 				test('simple script run', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
-					const struct = packageManager.getRunScriptStruct('my-script', { format: 'full' });
+					const struct = await packageManager.getRunScriptStruct('my-script', { format: 'full' });
 					expect(struct?.cmd).toEqual(pm);
 					expect(struct?.pmCmd).toEqual('run');
 					expect(struct?.script).toEqual('my-script');
@@ -161,7 +161,7 @@ suite('Scripts', () => {
 
 				test('script run with simple arguments', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
-					const struct = packageManager.getRunScriptStruct('my-script', {
+					const struct = await packageManager.getRunScriptStruct('my-script', {
 						args: ['--help', '-v'],
 						format: 'full',
 					});
@@ -187,7 +187,7 @@ suite('Scripts', () => {
 
 				test('script run with parametrized arguments', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
-					const struct = packageManager.getRunScriptStruct('my-script', {
+					const struct = await packageManager.getRunScriptStruct('my-script', {
 						args: ['--env', 'test', '--message "this is a message"'],
 						format: 'full',
 					});
@@ -217,7 +217,7 @@ suite('Scripts', () => {
 
 				test('simple script run with positional and flag arguments', async ({ expect }) => {
 					const packageManager = await getPackageManagerForTesting(pm);
-					const struct = packageManager.getRunScriptStruct('compute', {
+					const struct = await packageManager.getRunScriptStruct('compute', {
 						args: ['5', '10', '--operation', 'multiply'],
 						format: 'full',
 					});
@@ -249,7 +249,8 @@ suite('Scripts', () => {
 
 		test('empty script generates null', async ({ expect }) => {
 			const packageManager = await getPackageManagerForTesting('npm');
-			expect(packageManager.getRunScript('')).toBe(null);
+			const script = await packageManager.getRunScript('');
+			expect(script).toBe(null);
 		});
 
 		test('delegates to getRunScriptStruct', ({ expect }) => {
@@ -260,8 +261,8 @@ suite('Scripts', () => {
 							(['short', 'full'] as const).forEach(async (format) => {
 								const packageManager = await getPackageManagerForTesting(pm);
 								const options = { format, args };
-								const str = packageManager.getRunScript(script, options);
-								const struct = packageManager.getRunScriptStruct(script, options);
+								const str = await packageManager.getRunScript(script, options);
+								const struct = await packageManager.getRunScriptStruct(script, options);
 								expect(str).toEqual(struct?.toString());
 							});
 						},
