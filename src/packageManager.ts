@@ -16,7 +16,7 @@ export type PackageManager = {
 	 * be different from the package manager's name in the case the package manager being used is different from
 	 * the one the project is supposed to be used with (e.g. if the current process is running via `npm` inside a
 	 * project set up using `pnpm`) */
-	projectPackageManager: PackageManagerName|null;
+	projectPackageManager: PackageManagerName | null;
 	/** The version of the package manager */
 	version: string;
 	/**
@@ -80,38 +80,38 @@ async function getPackageManagerVersion(packageManager: PackageManagerName): Pro
 export async function getPackageManager(): Promise<PackageManager | null> {
 	const { packageManagerName, filesBasedPackageManager } = await detectPackageManagerName();
 
-		if(packageManagerName){
-			const name = packageManagerName;
-			const version = await getPackageManagerVersion(packageManagerName);
-			const packageManager: PackageManager = {
-				name: packageManagerName,
-				version,
-				projectPackageManager: filesBasedPackageManager,
-				// initialization of dummy fields which get populated in the next steps
-				cliCommandKeywords: new Set(),
-				getPackageInfo: async () => null,
-				getRunScript: async () => null,
-				getRunScriptStruct: async () => null,
-				getRunExec: async () => null,
-				getRunExecStruct: async () => null,
-			};
+	if (packageManagerName) {
+		const name = packageManagerName;
+		const version = await getPackageManagerVersion(packageManagerName);
+		const packageManager: PackageManager = {
+			name: packageManagerName,
+			version,
+			projectPackageManager: filesBasedPackageManager,
+			// initialization of dummy fields which get populated in the next steps
+			cliCommandKeywords: new Set(),
+			getPackageInfo: async () => null,
+			getRunScript: async () => null,
+			getRunScriptStruct: async () => null,
+			getRunExec: async () => null,
+			getRunExecStruct: async () => null,
+		};
 
-			packageManager.cliCommandKeywords = getPmCliCommandKeywords(packageManager);
+		packageManager.cliCommandKeywords = getPmCliCommandKeywords(packageManager);
 
-			packageManager.getPackageInfo = getPackageInfoFunction({ name, version });
+		packageManager.getPackageInfo = getPackageInfoFunction({ name, version });
 
-			const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(packageManager);
+		const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(packageManager);
 
-			const { getRunExec, getRunExecStruct } = getRunExecFunctions(packageManager);
+		const { getRunExec, getRunExecStruct } = getRunExecFunctions(packageManager);
 
-			packageManager.getRunScript = getRunScript;
-			packageManager.getRunScriptStruct = getRunScriptStruct;
+		packageManager.getRunScript = getRunScript;
+		packageManager.getRunScriptStruct = getRunScriptStruct;
 
-			packageManager.getRunExec = getRunExec;
-			packageManager.getRunExecStruct = getRunExecStruct;
+		packageManager.getRunExec = getRunExec;
+		packageManager.getRunExecStruct = getRunExecStruct;
 
-			return packageManager;
-		}
+		return packageManager;
+	}
 
 	return null;
 }
