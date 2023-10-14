@@ -2,7 +2,7 @@ import type { PackageManagerName } from "src/packageManager";
 import { lockFiles } from "./locks";
 import { getProjectRootDir } from "./workspace";
 
-export async function detectPackageManagerViaDirectoryContent(): Promise<PackageManagerName|null> {
+export async function detectPackageManagerBasedOnFiles(): Promise<PackageManagerName|null> {
   const projectRootDir = await getProjectRootDir();
 
 	if (!projectRootDir) {
@@ -21,6 +21,16 @@ export async function detectPackageManagerViaDirectoryContent(): Promise<Package
   return null;
 }
 
-export async function detectPackageManagerType(): Promise<PackageManagerName|null> {
-  return detectPackageManagerViaDirectoryContent();
+export async function detectPackageManagerName(): Promise<{
+  packageManagerName: PackageManagerName|null,
+  userAgentPackageManager: PackageManagerName|null,
+  filesBasedPackageManager: PackageManagerName|null,
+}> {
+  const filesBasedPackageManager = await detectPackageManagerBasedOnFiles();
+
+  return {
+    packageManagerName: null,
+    userAgentPackageManager: null,
+    filesBasedPackageManager,
+  }
 }

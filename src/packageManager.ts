@@ -2,7 +2,7 @@ import shellac from 'shellac';
 import type { GetRunExec, GetRunExecStruct, GetRunScript, GetRunScriptStruct } from './commands';
 import { getRunExecFunctions, getRunScriptFunctions } from './commands';
 import { getPackageInfoFunction, type GetPackageInfo } from './package';
-import { getPmCliCommandKeywords, detectPackageManagerType } from './utils';
+import { getPmCliCommandKeywords, detectPackageManagerName } from './utils';
 
 export type PackageManagerName = 'npm' | 'yarn' | 'pnpm' | 'bun';
 
@@ -10,8 +10,13 @@ export type PackageManagerName = 'npm' | 'yarn' | 'pnpm' | 'bun';
  * Object containing all the information and utilities regarding the current package manager
  */
 export type PackageManager = {
-	/** The name of the package manager (one of `'npm'`, `'yarn'`, `'pnpm'` or `'bun'`) */
+	/** The name of the current package manager (one of `'npm'`, `'yarn'`, `'pnpm'` or `'bun'`) */
 	name: PackageManagerName;
+	/** The name of the package manager the project in the current directory is set up for (if any), which might
+	 * be different from the package manager's name in the case the package manager being used is different from
+	 * the one the project is supposed to be used with (e.g. if the current process is running via `npm` inside a
+	 * project set up using `pnpm`) */
+	projectPackageManager: PackageManagerName|null;
 	/** The version of the package manager */
 	version: string;
 	/**
@@ -73,24 +78,15 @@ async function getPackageManagerVersion(packageManager: PackageManagerName): Pro
  * @returns the current package manager information, or null if no package manager could be detected
  */
 export async function getPackageManager(): Promise<PackageManager | null> {
-	const packageManagerName = await detectPackageManagerType();
-	// const projectRootDir = await getProjectRootDir();
+	const { packageManagerName, filesBasedPackageManager } = await detectPackageManagerName();
 
-	// if (!projectRootDir) {
-	// 	return null;
-	// }
-
-	// const projectRootFiles = projectRootDir.files;
-
-	// for (const key of Object.keys(lockFiles)) {
-	// 	const packageManagerName = key as keyof typeof lockFiles;
-	// 	if (projectRootFiles.includes(lockFiles[packageManagerName])) {
 		if(packageManagerName){
 			const name = packageManagerName;
 			const version = await getPackageManagerVersion(packageManagerName);
 			const packageManager: PackageManager = {
 				name: packageManagerName,
 				version,
+				projectPackageManager: filesBasedPackageManager,
 				// initialization of dummy fields which get populated in the next steps
 				cliCommandKeywords: new Set(),
 				getPackageInfo: async () => null,
@@ -116,8 +112,6 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 
 			return packageManager;
 		}
-	// 	}
-	// }
 
 	return null;
 }
