@@ -5,7 +5,7 @@ import { getNpmGetPackageInfoFunction } from './npm';
 import { getPnpmGetPackageInfoFunction } from './pnpm';
 import { getYarnGetPackageInfoFunction } from './yarn';
 
-type PackageInfo = {
+export type PackageInfo = {
 	/** The name of the package */
 	name: string;
 	/** The version of the package */
