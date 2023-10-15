@@ -1,7 +1,6 @@
 import mockFs from 'mock-fs';
 import { suite, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { getPackageManager } from '../src/packageManager';
-import { setupFsForTesting } from './utils';
 
 type ShellacMock = {
 	addMock: (command: string, result: string | { stdout: string; stderr: string }) => void;
@@ -61,28 +60,28 @@ suite('PackageManager version', () => {
 	afterEach(() => mockFs.restore());
 
 	test('npm detection', async () => {
-		await setupFsForTesting('npm');
+		process.env['npm_config_user_agent'] = 'npm/v node/v linux';
 		shellacMock.addMock('$ npm --version', '16.16.0');
 		const packageManager = await getPackageManager();
 		expect(packageManager?.version).toEqual('16.16.0');
 	});
 
 	test('yarn detection', async () => {
-		await setupFsForTesting('yarn');
+		process.env['npm_config_user_agent'] = 'yarn/v node/v linux';
 		shellacMock.addMock('$ yarn --version', '1.22.0');
 		const packageManager = await getPackageManager();
 		expect(packageManager?.version).toEqual('1.22.0');
 	});
 
 	test('pnpm detection', async () => {
-		await setupFsForTesting('pnpm');
+		process.env['npm_config_user_agent'] = 'pnpm/v node/v linux';
 		shellacMock.addMock('$ pnpm --version', '7.27.0');
 		const packageManager = await getPackageManager();
 		expect(packageManager?.version).toEqual('7.27.0');
 	});
 
 	test('bun detection', async () => {
-		await setupFsForTesting('bun');
+		process.env['npm_config_user_agent'] = 'bun/v node/v linux';
 		shellacMock.addMock('$ bun --version', '0.7.3');
 		const packageManager = await getPackageManager();
 		expect(packageManager?.version).toEqual('0.7.3');

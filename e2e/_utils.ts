@@ -1,9 +1,10 @@
 import { readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+import type { PackageManagerName } from 'src';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { beforeAll, afterAll, suite } from 'vitest';
 
-type WithFixturesOpts = { only?: string[]; skip?: string[] };
+type WithFixturesOpts = { only?: string[]; skip?: string[]; userAgentPm?: PackageManagerName };
 type Fn = (info: { fixture: string; fixturePath: string }) => void;
 
 const originalDir = process.cwd();
@@ -37,7 +38,8 @@ const fixturesDir = resolve(originalDir, 'e2e', 'fixtures');
  * @param fn The tests to run for each fixture.
  */
 export const withFixtures = async (...args: [WithFixturesOpts, Fn] | [Fn]) => {
-	const [{ only, skip }, fn] = args.length === 2 ? args : [{} satisfies WithFixturesOpts, args[0]];
+	const [{ only, skip, userAgentPm }, fn] =
+		args.length === 2 ? args : [{} satisfies WithFixturesOpts, args[0]];
 
 	const fixtures = readdirSync(fixturesDir)
 		.filter((fixture) => !skip?.includes(fixture))
@@ -49,6 +51,10 @@ export const withFixtures = async (...args: [WithFixturesOpts, Fn] | [Fn]) => {
 			beforeAll(() => {
 				process.chdir(fixturePath);
 			});
+
+			process.env['npm_config_user_agent'] = userAgentPm
+				? `${userAgentPm}/v node/v linux`
+				: undefined;
 
 			await Promise.resolve(fn({ fixture, fixturePath }));
 
