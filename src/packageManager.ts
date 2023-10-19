@@ -71,7 +71,7 @@ async function getPackageManagerVersion(
 	packageManager: PackageManagerName,
 ): Promise<string | null> {
 	try {
-		const { stdout } = await shellac`$ ${packageManager} --version `;
+		const { stdout } = await shellac`$ ${packageManager} --version`;
 		return stdout;
 	} catch {
 		return null;
