@@ -1,5 +1,13 @@
 # package-manager-manager
 
+## 0.1.3
+
+### Patch Changes
+
+- 7e6d0b9: make `getRunScript` async to align it to `getRunExec`
+- 35550fa: add packageManager detection based on user agent
+- 4f1e0d2: set packageManager version to null in case the version detection fails
+
 ## 0.1.2
 
 ### Patch Changes
