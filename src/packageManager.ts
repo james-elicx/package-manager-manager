@@ -18,7 +18,7 @@ export type PackageManager = {
 	 * project set up using `pnpm`) */
 	projectPackageManager: PackageManagerName | null;
 	/** The version of the package manager */
-	version: string;
+	version: string | null;
 	/**
 	 * Utility to get the information of an installed package
 	 *
@@ -67,9 +67,15 @@ export type PackageManager = {
 	cliCommandKeywords: Set<string>;
 };
 
-async function getPackageManagerVersion(packageManager: PackageManagerName): Promise<string> {
-	const { stdout } = await shellac`$ ${packageManager} --version`;
-	return stdout;
+async function getPackageManagerVersion(
+	packageManager: PackageManagerName,
+): Promise<string | null> {
+	try {
+		const { stdout } = await shellac`$ ${packageManager} --version`;
+		return stdout;
+	} catch {
+		return null;
+	}
 }
 
 /**
