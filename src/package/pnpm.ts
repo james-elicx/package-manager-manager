@@ -1,4 +1,4 @@
-import shellac from 'shellac';
+import { shellac } from '../utils';
 import type { GetPackageInfo } from './index';
 
 export function getPnpmGetPackageInfoFunction() {

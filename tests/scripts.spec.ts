@@ -3,7 +3,9 @@ import { vi, suite, test, afterEach, describe } from 'vitest';
 import { getPackageManagerForTesting } from './utils';
 
 vi.mock('shellac', () => ({
-	default: () => ({ stdout: '', stderr: '' }),
+	default: {
+		env: () => () => ({ stdout: '', stderr: '' }),
+	},
 }));
 
 suite('Scripts', () => {

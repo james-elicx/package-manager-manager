@@ -1,6 +1,5 @@
-import shellac from 'shellac';
 import type { PackageManager } from '../packageManager';
-import { isYarnClassic } from '../utils';
+import { shellac, isYarnClassic } from '../utils';
 import type { GetPackageInfo } from './index';
 
 export function getYarnGetPackageInfoFunction(

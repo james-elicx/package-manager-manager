@@ -1,8 +1,7 @@
-import shellac from 'shellac';
 import type { GetRunExec, GetRunExecStruct, GetRunScript, GetRunScriptStruct } from './commands';
 import { getRunExecFunctions, getRunScriptFunctions } from './commands';
 import { getPackageInfoFunction, type GetPackageInfo } from './package';
-import { getPmCliCommandKeywords, detectPackageManagerName } from './utils';
+import { getPmCliCommandKeywords, detectPackageManagerName, shellac } from './utils';
 
 export type PackageManagerName = 'npm' | 'yarn' | 'pnpm' | 'bun';
 
@@ -18,7 +17,7 @@ export type PackageManager = {
 	 * project set up using `pnpm`) */
 	projectPackageManager: PackageManagerName | null;
 	/** The version of the package manager */
-	version: string | null;
+	version: string;
 	/**
 	 * Utility to get the information of an installed package
 	 *
@@ -67,15 +66,9 @@ export type PackageManager = {
 	cliCommandKeywords: Set<string>;
 };
 
-async function getPackageManagerVersion(
-	packageManager: PackageManagerName,
-): Promise<string | null> {
-	try {
-		const { stdout } = await shellac`$ ${packageManager} --version`;
-		return stdout;
-	} catch {
-		return null;
-	}
+async function getPackageManagerVersion(packageManager: PackageManagerName): Promise<string> {
+	const { stdout } = await shellac`$ ${packageManager} --version`;
+	return stdout;
 }
 
 /**

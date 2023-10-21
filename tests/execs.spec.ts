@@ -14,7 +14,9 @@ function resetShellacMocks() {
 }
 
 vi.mock('shellac', () => ({
-	default: () => shellacMocks,
+	default: {
+		env: () => () => shellacMocks,
+	},
 }));
 
 suite('Exec', () => {
