@@ -1,5 +1,16 @@
 # package-manager-manager
 
+## 0.2.0
+
+### Minor Changes
+
+- f6ce4f4: add `metadata` field with `isYarnClassic` and `isYarnBerry` flags
+- ff58791: properly export script and exec-specific types
+
+### Patch Changes
+
+- 69fef32: properly fix pm version detection failing in the Cloudflare Pages CI
+
 ## 0.1.3
 
 ### Patch Changes
