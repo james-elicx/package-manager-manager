@@ -1,0 +1,26 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index 2dba4e1ef63990afd2fed5ab76f5f73474636b75..5d65190f6e049196c61c8668cb985bad58e4d882 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -1012,7 +1012,7 @@ function makeShellac(cwd = process.cwd(), env = {}, shell = lazyCreateShell) {
+     }
+   });
+ }
+-var shellac = makeShellac();
++var shellac = makeShellac(undefined, process.env);
+ var src_default = shellac;
+ // Annotate the CommonJS export names for ESM import in node:
+ 0 && (module.exports = {});
+diff --git a/dist/index.js b/dist/index.js
+index 5b74396bf323b2319e9e13827bf237f41f0ee126..5e45411edc2b8ea472fe9ed47df1a9ef94fc2207 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -986,7 +986,7 @@ function makeShellac(cwd = process.cwd(), env = {}, shell = lazyCreateShell) {
+     }
+   });
+ }
+-var shellac = makeShellac();
++var shellac = makeShellac(undefined, process.env);
+ var src_default = shellac;
+ export {
+   src_default as default

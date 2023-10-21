@@ -65,5 +65,10 @@
 	"dependencies": {
 		"js-yaml": "^4.1.0",
 		"shellac": "^0.8.0"
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"shellac@0.8.0": "patches/shellac@0.8.0.patch"
+		}
 	}
 }

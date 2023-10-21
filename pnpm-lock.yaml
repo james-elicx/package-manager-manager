@@ -1,12 +1,17 @@
 lockfileVersion: '6.0'
 
+patchedDependencies:
+  shellac@0.8.0:
+    hash: dcb37gsmyfv6thxiyzmoqs2fvu
+    path: patches/shellac@0.8.0.patch
+
 dependencies:
   js-yaml:
     specifier: ^4.1.0
     version: 4.1.0
   shellac:
     specifier: ^0.8.0
-    version: 0.8.0
+    version: 0.8.0(patch_hash=dcb37gsmyfv6thxiyzmoqs2fvu)
 
 devDependencies:
   '@changesets/cli':
@@ -3484,11 +3489,12 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /shellac@0.8.0:
+  /shellac@0.8.0(patch_hash=dcb37gsmyfv6thxiyzmoqs2fvu):
     resolution: {integrity: sha512-M3F2vzYIM7frKOs0+kgs/ITMlXhGpgtqs9HxDPciz3bckzAqqfd4LrBn+CCmSbICyJS+Jz5UDkmkR1jE+m+g+Q==}
     dependencies:
       reghex: 1.0.2
     dev: false
+    patched: true
 
   /side-channel@1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==}
