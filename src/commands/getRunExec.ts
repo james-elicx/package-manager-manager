@@ -74,7 +74,7 @@ class RunExecStruct implements CommandExecStruct {
 			case 'npm':
 				return format === 'short' ? { cmd: 'npx' } : { cmd: 'npm', pmCmd: 'exec' };
 			case 'yarn':
-				if (packageManager.version.startsWith('1.')) {
+				if (isYarnClassic(packageManager)) {
 					// yarn classic doesn't have dlx
 					return { cmd: 'yarn', pmCmd: 'exec' };
 				}
