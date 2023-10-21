@@ -4,7 +4,9 @@ import { getPackageManager } from '../src/packageManager';
 import { setupFsForTesting } from './utils';
 
 vi.mock('shellac', () => ({
-	default: () => ({ stdout: '', stderr: '' }),
+	default: {
+		env: () => () => ({ stdout: '', stderr: '' }),
+	},
 }));
 
 suite('PackageManager name', () => {

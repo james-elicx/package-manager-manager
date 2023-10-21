@@ -12,7 +12,9 @@ function resetShellacMocks() {
 }
 
 vi.mock('shellac', () => ({
-	default: () => shellacMocks,
+	default: {
+		env: () => () => shellacMocks,
+	},
 }));
 
 // Note: the tests here are not exhaustive as that would require us to include all the possible CLI command keywords
