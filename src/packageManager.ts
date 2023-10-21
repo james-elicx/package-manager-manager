@@ -1,8 +1,7 @@
-import shellac from 'shellac';
 import type { GetRunExec, GetRunExecStruct, GetRunScript, GetRunScriptStruct } from './commands';
 import { getRunExecFunctions, getRunScriptFunctions } from './commands';
 import { getPackageInfoFunction, type GetPackageInfo } from './package';
-import { getPmCliCommandKeywords, detectPackageManagerName } from './utils';
+import { getPmCliCommandKeywords, detectPackageManagerName, shellac } from './utils';
 
 export type PackageManagerName = 'npm' | 'yarn' | 'pnpm' | 'bun';
 
