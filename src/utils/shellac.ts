@@ -1,3 +1,4 @@
+/* eslint-disable-next-line no-restricted-imports -- this file should be the only one importing from shellac */
 import originalShellac from 'shellac';
 
 // Note: shellac by default does not pass the current process.env to the shell it

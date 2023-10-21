@@ -18,7 +18,14 @@
 		"no-console": "error",
 		"no-underscore-dangle": "off",
 
-		"unicorn/prefer-node-protocol": "error"
+		"unicorn/prefer-node-protocol": "error",
+		"no-restricted-imports": [
+			"error",
+			{
+				"name": "shellac",
+				"message": "Please use the utils/shellac override instead of importing directly from shellac"
+			}
+		]
 	},
 	"ignorePatterns": ["dist", "scripts"]
 }
