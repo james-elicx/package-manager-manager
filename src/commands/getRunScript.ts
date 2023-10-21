@@ -1,6 +1,11 @@
 import type { PackageManager } from '../packageManager';
 import type { CommandScriptStruct } from './CommandStruct';
 
+/**
+ * The subset of properties of PackageManager that are relevant when dealing with scripts
+ */
+type PackageManagerForScripts = Pick<PackageManager, 'name' | 'cliCommandKeywords'>;
+
 class RunScriptStruct implements CommandScriptStruct {
 	cmd: string;
 
@@ -11,7 +16,7 @@ class RunScriptStruct implements CommandScriptStruct {
 	argsNeedDoubleDashes: boolean;
 
 	constructor(
-		packageManager: Pick<PackageManager, 'name' | 'cliCommandKeywords'>,
+		packageManager: PackageManagerForScripts,
 		public script: string,
 		options?: Partial<GetRunScriptOptions>,
 	) {
@@ -46,7 +51,7 @@ class RunScriptStruct implements CommandScriptStruct {
 	}
 
 	static #shouldRunKeywordBeIncluded(
-		packageManager: Pick<PackageManager, 'name' | 'cliCommandKeywords'>,
+		packageManager: PackageManagerForScripts,
 		script: string,
 		format: GetRunScriptOptions['format'],
 	): boolean {
@@ -90,9 +95,7 @@ export type GetRunScriptStruct = (
 	options?: Partial<GetRunScriptOptions>,
 ) => Promise<CommandScriptStruct | null>;
 
-export function getRunScriptFunctions(
-	packageManager: Pick<PackageManager, 'name' | 'cliCommandKeywords'>,
-): {
+export function getRunScriptFunctions(packageManager: PackageManagerForScripts): {
 	getRunScript: GetRunScript;
 	getRunScriptStruct: GetRunScriptStruct;
 } {

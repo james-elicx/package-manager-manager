@@ -1,6 +1,12 @@
-import type { PackageManager } from '../packageManager';
-import { isYarnClassic } from '../utils';
+import type { PackageManager, PackageManagerMetadata } from '../packageManager';
 import type { CommandExecStruct } from './CommandStruct';
+
+/**
+ * The subset of properties of PackageManager that are relevant when dealing with exec commands
+ */
+type PackageManagerForExec = Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'> & {
+	metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
+};
 
 class RunExecStruct implements CommandExecStruct {
 	structIsReady: Promise<void>;
@@ -14,7 +20,7 @@ class RunExecStruct implements CommandExecStruct {
 	argsNeedDoubleDashes: boolean;
 
 	constructor(
-		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
+		packageManager: PackageManagerForExec,
 		public pkgCmd: string,
 		options?: Partial<GetRunExecOptions>,
 	) {
@@ -42,7 +48,7 @@ class RunExecStruct implements CommandExecStruct {
 			);
 		});
 
-		this.argsNeedDoubleDashes = isYarnClassic(packageManager);
+		this.argsNeedDoubleDashes = packageManager.metadata.isYarnClassic;
 	}
 
 	get cmdArgs(): string[] {
@@ -63,7 +69,7 @@ class RunExecStruct implements CommandExecStruct {
 	}
 
 	static async #getPmKeywords(
-		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
+		packageManager: PackageManagerForExec,
 		command: string,
 		format: 'short' | 'full',
 		download: DownloadPreference,
@@ -74,7 +80,7 @@ class RunExecStruct implements CommandExecStruct {
 			case 'npm':
 				return format === 'short' ? { cmd: 'npx' } : { cmd: 'npm', pmCmd: 'exec' };
 			case 'yarn':
-				if (isYarnClassic(packageManager)) {
+				if (packageManager.metadata.isYarnClassic) {
 					// yarn classic doesn't have dlx
 					return { cmd: 'yarn', pmCmd: 'exec' };
 				}
@@ -151,9 +157,7 @@ export type GetRunExecStruct = (
 	options?: Partial<GetRunExecOptions>,
 ) => Promise<CommandExecStruct | null>;
 
-export function getRunExecFunctions(
-	packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
-): {
+export function getRunExecFunctions(packageManager: PackageManagerForExec): {
 	getRunExec: GetRunExec;
 	getRunExecStruct: GetRunExecStruct;
 } {
