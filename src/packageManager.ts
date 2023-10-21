@@ -104,6 +104,10 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 			name: packageManagerName,
 			version,
 			projectPackageManager: filesBasedPackageManager,
+			metadata: {
+				isYarnClassic,
+				isYarnBerry,
+			},
 			// initialization of dummy fields which get populated in the next steps
 			cliCommandKeywords: new Set(),
 			getPackageInfo: async () => null,
@@ -111,10 +115,6 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 			getRunScriptStruct: async () => null,
 			getRunExec: async () => null,
 			getRunExecStruct: async () => null,
-			metadata: {
-				isYarnClassic,
-				isYarnBerry,
-			},
 		};
 
 		packageManager.cliCommandKeywords = getPmCliCommandKeywords(packageManager);
