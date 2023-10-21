@@ -1,6 +1,13 @@
 import type { PackageManager, PackageManagerMetadata } from '../packageManager';
 import type { CommandExecStruct } from './CommandStruct';
 
+/**
+ * The subset of properties of PackageManager that are relevant when dealing with exec commands
+ */
+type PackageManagerForExec = Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'> & {
+	metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
+};
+
 class RunExecStruct implements CommandExecStruct {
 	structIsReady: Promise<void>;
 
@@ -13,9 +20,7 @@ class RunExecStruct implements CommandExecStruct {
 	argsNeedDoubleDashes: boolean;
 
 	constructor(
-		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'> & {
-			metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
-		},
+		packageManager: PackageManagerForExec,
 		public pkgCmd: string,
 		options?: Partial<GetRunExecOptions>,
 	) {
@@ -64,9 +69,7 @@ class RunExecStruct implements CommandExecStruct {
 	}
 
 	static async #getPmKeywords(
-		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'> & {
-			metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
-		},
+		packageManager: PackageManagerForExec,
 		command: string,
 		format: 'short' | 'full',
 		download: DownloadPreference,
@@ -154,11 +157,7 @@ export type GetRunExecStruct = (
 	options?: Partial<GetRunExecOptions>,
 ) => Promise<CommandExecStruct | null>;
 
-export function getRunExecFunctions(
-	packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'> & {
-		metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
-	},
-): {
+export function getRunExecFunctions(packageManager: PackageManagerForExec): {
 	getRunExec: GetRunExec;
 	getRunExecStruct: GetRunExecStruct;
 } {
