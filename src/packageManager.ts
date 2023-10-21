@@ -64,6 +64,21 @@ export type PackageManager = {
 	 * `npx` is not part of the set since it is a different command entirely and not a keyword used in npm (i.e. you don't run `npm npx`)
 	 */
 	cliCommandKeywords: Set<string>;
+	/**
+	 * Set of metadata associated to the package manager.
+	 */
+	metadata: PackageManagerMetadata;
+};
+
+export type PackageManagerMetadata = {
+	/**
+	 * Flag indicating whether the package manager is yarn classic (meaning that it is yarn and its version is less than 2)
+	 */
+	isYarnClassic: boolean;
+	/**
+	 * Flag indicating whether the package manager is yarn berry (meaning that it is yarn and its version greater than 2)
+	 */
+	isYarnBerry: boolean;
 };
 
 async function getPackageManagerVersion(packageManager: PackageManagerName): Promise<string> {
@@ -82,6 +97,9 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 	if (packageManagerName) {
 		const name = packageManagerName;
 		const version = await getPackageManagerVersion(packageManagerName);
+		const versionMajorIs0Or1 = version.startsWith('0.') || version.startsWith('1.');
+		const isYarnClassic = name === 'yarn' && versionMajorIs0Or1;
+		const isYarnBerry = name === 'yarn' && !versionMajorIs0Or1;
 		const packageManager: PackageManager = {
 			name: packageManagerName,
 			version,
@@ -93,11 +111,19 @@ export async function getPackageManager(): Promise<PackageManager | null> {
 			getRunScriptStruct: async () => null,
 			getRunExec: async () => null,
 			getRunExecStruct: async () => null,
+			metadata: {
+				isYarnClassic,
+				isYarnBerry,
+			},
 		};
 
 		packageManager.cliCommandKeywords = getPmCliCommandKeywords(packageManager);
 
-		packageManager.getPackageInfo = getPackageInfoFunction({ name, version });
+		packageManager.getPackageInfo = getPackageInfoFunction({
+			name,
+			version,
+			metadata: { isYarnClassic },
+		});
 
 		const { getRunScript, getRunScriptStruct } = getRunScriptFunctions(packageManager);
 

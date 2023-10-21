@@ -1,5 +1,4 @@
-import type { PackageManager } from 'src/packageManager';
-import { isYarnClassic } from './yarn';
+import type { PackageManager, PackageManagerMetadata } from '../packageManager';
 
 // source: https://docs.npmjs.com/cli/v10/commands?v=true
 const npmCliCommandKeywords = [
@@ -204,7 +203,9 @@ const bunCliCommandKeywords = ['add', 'install', 'link', 'pm', 'remove', 'run', 
  * @returns the set of keywords
  */
 export function getPmCliCommandKeywords(
-	packageManager: Pick<PackageManager, 'name' | 'version'>,
+	packageManager: Pick<PackageManager, 'name' | 'version'> & {
+		metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
+	},
 ): Readonly<Set<string>> {
 	let keywords: string[] = [];
 
@@ -215,7 +216,7 @@ export function getPmCliCommandKeywords(
 			bun: bunCliCommandKeywords,
 		}[packageManager.name];
 	} else {
-		keywords = isYarnClassic(packageManager)
+		keywords = packageManager.metadata.isYarnClassic
 			? yarnClassicCliCommandKeywords
 			: yarnBerryCliCommandKeywords;
 	}

@@ -1,4 +1,4 @@
-import type { PackageManager } from '../packageManager';
+import type { PackageManager, PackageManagerMetadata } from '../packageManager';
 
 import { getBunGetPackageInfoFunction } from './bun';
 import { getNpmGetPackageInfoFunction } from './npm';
@@ -21,7 +21,9 @@ export type GetPackageInfo = (packageName: string) => Promise<PackageInfo | null
  * @returns the getPackageInfo function for the package manager
  */
 export function getPackageInfoFunction(
-	packageManager: Pick<PackageManager, 'name' | 'version'>,
+	packageManager: Pick<PackageManager, 'name' | 'version'> & {
+		metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
+	},
 ): GetPackageInfo {
 	switch (packageManager.name) {
 		case 'npm':

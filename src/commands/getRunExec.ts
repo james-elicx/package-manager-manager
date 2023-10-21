@@ -1,5 +1,4 @@
-import type { PackageManager } from '../packageManager';
-import { isYarnClassic } from '../utils';
+import type { PackageManager, PackageManagerMetadata } from '../packageManager';
 import type { CommandExecStruct } from './CommandStruct';
 
 class RunExecStruct implements CommandExecStruct {
@@ -14,7 +13,9 @@ class RunExecStruct implements CommandExecStruct {
 	argsNeedDoubleDashes: boolean;
 
 	constructor(
-		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
+		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'> & {
+			metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
+		},
 		public pkgCmd: string,
 		options?: Partial<GetRunExecOptions>,
 	) {
@@ -42,7 +43,7 @@ class RunExecStruct implements CommandExecStruct {
 			);
 		});
 
-		this.argsNeedDoubleDashes = isYarnClassic(packageManager);
+		this.argsNeedDoubleDashes = packageManager.metadata.isYarnClassic;
 	}
 
 	get cmdArgs(): string[] {
@@ -63,7 +64,9 @@ class RunExecStruct implements CommandExecStruct {
 	}
 
 	static async #getPmKeywords(
-		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
+		packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'> & {
+			metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
+		},
 		command: string,
 		format: 'short' | 'full',
 		download: DownloadPreference,
@@ -74,7 +77,7 @@ class RunExecStruct implements CommandExecStruct {
 			case 'npm':
 				return format === 'short' ? { cmd: 'npx' } : { cmd: 'npm', pmCmd: 'exec' };
 			case 'yarn':
-				if (isYarnClassic(packageManager)) {
+				if (packageManager.metadata.isYarnClassic) {
 					// yarn classic doesn't have dlx
 					return { cmd: 'yarn', pmCmd: 'exec' };
 				}
@@ -152,7 +155,9 @@ export type GetRunExecStruct = (
 ) => Promise<CommandExecStruct | null>;
 
 export function getRunExecFunctions(
-	packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'>,
+	packageManager: Pick<PackageManager, 'name' | 'version' | 'getPackageInfo'> & {
+		metadata: Pick<PackageManagerMetadata, 'isYarnClassic'>;
+	},
 ): {
 	getRunExec: GetRunExec;
 	getRunExecStruct: GetRunExecStruct;
