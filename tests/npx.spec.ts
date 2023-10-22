@@ -15,7 +15,7 @@ suite('npx', () => {
 				const myScriptRun = await npx` pkg-command`;
 				const expectedScriptRun = {
 					npm: 'npx pkg-command',
-					yarn: 'yarn exec pkg-command',
+					yarn: 'yarn dlx pkg-command',
 					pnpm: 'pnpm dlx pkg-command',
 					bun: 'bunx pkg-command',
 				}[pm];
@@ -31,7 +31,7 @@ suite('npx', () => {
 				const myScriptRun = await npx` pkg-command ./out --output esm --verbose`;
 				const expectedScriptRun = {
 					npm: 'npx pkg-command ./out --output esm --verbose',
-					yarn: 'yarn exec pkg-command -- ./out --output esm --verbose',
+					yarn: 'yarn dlx pkg-command ./out --output esm --verbose',
 					pnpm: 'pnpm dlx pkg-command ./out --output esm --verbose',
 					bun: 'bunx pkg-command ./out --output esm --verbose',
 				}[pm];
@@ -50,7 +50,7 @@ suite('npx', () => {
 				})` pkg-command ./out --output esm --verbose`;
 				const expectedScriptRun = {
 					npm: 'npm exec pkg-command -- ./out --output esm --verbose',
-					yarn: 'yarn exec pkg-command -- ./out --output esm --verbose',
+					yarn: 'yarn exec pkg-command ./out --output esm --verbose',
 					pnpm: 'pnpm exec pkg-command ./out --output esm --verbose',
 					bun: 'bun x pkg-command ./out --output esm --verbose',
 				}[pm];
