@@ -1,5 +1,11 @@
 import { npm_run } from 'src/shortFunctions/npm_run';
-import { suite, test, describe } from 'vitest';
+import { suite, test, describe, vi } from 'vitest';
+
+vi.mock('shellac', () => ({
+	default: {
+		env: () => () => ({ stdout: '', stderr: '' }),
+	},
+}));
 
 suite('npm_run', () => {
 	describe('simple script run', () => {

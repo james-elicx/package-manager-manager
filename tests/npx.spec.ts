@@ -1,5 +1,11 @@
 import { npx } from 'src/shortFunctions/npx';
-import { suite, test, describe } from 'vitest';
+import { suite, test, describe, vi } from 'vitest';
+
+vi.mock('shellac', () => ({
+	default: {
+		env: () => () => ({ stdout: '', stderr: '' }),
+	},
+}));
 
 suite('npx', () => {
 	describe('simple exec command run', () => {
