@@ -1,41 +1,61 @@
 import { parse as shellQuoteParse } from 'shell-quote';
+import type { GetRunScriptOptions } from 'src/commands';
 import { getPackageManager } from '../packageManager';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export async function npm_run(strings: TemplateStringsArray, ...values: unknown[]): Promise<string>{
-  if(!strings[0]) {
-    throw new Error('Malformed npm run command');
-  }
+type NpmRunOptions = Partial<Omit<GetRunScriptOptions, 'args'>>;
 
-  // Note: we don't do anything clever with the values (at least for now)
-  // we're using template string literals mainly for the minimalistic api
-  const inputString = values.reduce((accStr: string, value, index) => {
-      return `${accStr}___${value}___${strings[index + 1]}`
-  }, strings[0]);
+function getNpmRunFunction(options: NpmRunOptions = {}) {
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	return async function npm_run(
+		strings: TemplateStringsArray,
+		...values: unknown[]
+	): Promise<string> {
+		if (!strings[0]) {
+			throw new Error('Malformed npm run command');
+		}
 
-  const pm = await getPackageManager();
+		// Note: we don't do anything clever with the values (at least for now)
+		// we're using template string literals mainly for the minimalistic api
+		const inputString = values.reduce((accStr: string, value, index) => {
+			return `${accStr}___${value}___${strings[index + 1]}`;
+		}, strings[0]);
 
-  if(!pm) {
-    throw new Error('No package manager!');
-  }
+		const pm = await getPackageManager();
 
-  const [script, doubleDashes, ...scriptArgs] = shellQuoteParse(inputString).map(e => e.toString());
+		if (!pm) {
+			throw new Error('No package manager!');
+		}
 
-  if(!script) {
-    throw new Error('Malformed npm run command (no script provided)');
-  }
+		const [script, doubleDashes, ...scriptArgs] = shellQuoteParse(inputString).map((e) =>
+			e.toString(),
+		);
 
-  if(doubleDashes !== '--' && scriptArgs.length > 0) {
-    throw new Error('Malformed npm run command (no double dashes before args)');
-  }
+		if (!script) {
+			throw new Error('Malformed npm run command (no script provided)');
+		}
 
-  const result = await pm.getRunScript(script, {
-    args: scriptArgs
-  });
+		if (doubleDashes !== '--' && scriptArgs.length > 0) {
+			throw new Error('Malformed npm run command (no double dashes before args)');
+		}
 
-  if(!result) {
-    throw new Error('Failed to generate the script');
-  }
+		const result = await pm.getRunScript(script, {
+			...options,
+			args: scriptArgs,
+		});
 
-  return result;
+		if (!result) {
+			throw new Error('Failed to generate the script');
+		}
+
+		return result;
+	};
 }
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const npm_run = getNpmRunFunction() as ReturnType<typeof getNpmRunFunction> & {
+	with: (options: NpmRunOptions) => ReturnType<typeof getNpmRunFunction>;
+};
+
+npm_run.with = function npxWith(options: NpmRunOptions) {
+	return getNpmRunFunction(options);
+};

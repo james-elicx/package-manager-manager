@@ -1,37 +1,50 @@
-
 import { parse as shellQuoteParse } from 'shell-quote';
+import type { GetRunExecOptions } from '../commands';
 import { getPackageManager } from '../packageManager';
 
-export async function npx(strings: TemplateStringsArray, ...values: unknown[]): Promise<string>{
-  if(!strings[0]) {
-    throw new Error('Malformed npm run command');
-  }
+type NpxOptions = Partial<Omit<GetRunExecOptions, 'args'>>;
 
-  // Note: we don't do anything clever with the values (at least for now)
-  // we're using template string literals mainly for the minimalistic api
-  const inputString = values.reduce((accStr: string, value, index) => {
-      return `${accStr}___${value}___${strings[index + 1]}`
-  }, strings[0]);
+function getNpxFunction(options: NpxOptions = {}) {
+	return async function npx(strings: TemplateStringsArray, ...values: unknown[]): Promise<string> {
+		if (!strings[0]) {
+			throw new Error('Malformed npm run command');
+		}
 
-  const pm = await getPackageManager();
+		// Note: we don't do anything clever with the values (at least for now)
+		// we're using template string literals mainly for the minimalistic api
+		const inputString = values.reduce((accStr: string, value, index) => {
+			return `${accStr}___${value}___${strings[index + 1]}`;
+		}, strings[0]);
 
-  if(!pm) {
-    throw new Error('No package manager!');
-  }
+		const pm = await getPackageManager();
 
-  const [command, ...commandArgs] = shellQuoteParse(inputString).map(e => e.toString());
+		if (!pm) {
+			throw new Error('No package manager!');
+		}
 
-  if(!command) {
-    throw new Error('Malformed npm run command (no script provided)');
-  }
+		const [command, ...commandArgs] = shellQuoteParse(inputString).map((e) => e.toString());
 
-  const result = await pm.getRunExec(command, {
-    args: commandArgs
-  });
+		if (!command) {
+			throw new Error('Malformed npm run command (no script provided)');
+		}
 
-  if(!result) {
-    throw new Error('Failed to generate the script');
-  }
+		const result = await pm.getRunExec(command, {
+			...options,
+			args: commandArgs,
+		});
 
-  return result;
+		if (!result) {
+			throw new Error('Failed to generate the script');
+		}
+
+		return result;
+	};
 }
+
+export const npx = getNpxFunction() as ReturnType<typeof getNpxFunction> & {
+	with: (options: NpxOptions) => ReturnType<typeof getNpxFunction>;
+};
+
+npx.with = function npxWith(options: NpxOptions) {
+	return getNpxFunction(options);
+};
