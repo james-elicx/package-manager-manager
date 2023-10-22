@@ -34,8 +34,8 @@ function getNpmRunFunction(options: NpmRunOptions = {}) {
 			throw new Error('Malformed npm run command (no script provided)');
 		}
 
-		if (doubleDashes !== '--' && scriptArgs.length > 0) {
-			throw new Error('Malformed npm run command (no double dashes before args)');
+		if (doubleDashes && doubleDashes !== '--') {
+			throw new Error('Malformed npm run command (no double dashes provided)');
 		}
 
 		const result = await pm.getRunScript(script, {

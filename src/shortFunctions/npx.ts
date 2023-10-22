@@ -7,7 +7,7 @@ type NpxOptions = Partial<Omit<GetRunExecOptions, 'args'>>;
 function getNpxFunction(options: NpxOptions = {}) {
 	return async function npx(strings: TemplateStringsArray, ...values: unknown[]): Promise<string> {
 		if (!strings[0]) {
-			throw new Error('Malformed npm run command');
+			throw new Error('Malformed npx command');
 		}
 
 		// Note: we don't do anything clever with the values (at least for now)
@@ -25,7 +25,7 @@ function getNpxFunction(options: NpxOptions = {}) {
 		const [command, ...commandArgs] = shellQuoteParse(inputString).map((e) => e.toString());
 
 		if (!command) {
-			throw new Error('Malformed npm run command (no script provided)');
+			throw new Error('Malformed npx command (no command provided)');
 		}
 
 		const result = await pm.getRunExec(command, {
@@ -34,7 +34,7 @@ function getNpxFunction(options: NpxOptions = {}) {
 		});
 
 		if (!result) {
-			throw new Error('Failed to generate the script');
+			throw new Error('Failed to generate the exec command');
 		}
 
 		return result;
