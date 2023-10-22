@@ -52,30 +52,30 @@ suite('npm_run', () => {
 		});
 	});
 
-  describe('malformed scripts', () => {
-    test('empty', async ({ expect }) => {
-      process.env['npm_config_user_agent'] = `npm/v node/v linux`;
-      await expect(() => npm_run``).rejects.toThrowError();
-    });
+	describe('malformed scripts', () => {
+		test('empty', async ({ expect }) => {
+			process.env['npm_config_user_agent'] = `npm/v node/v linux`;
+			await expect(() => npm_run``).rejects.toThrowError();
+		});
 
-    test('only whitespaces', async ({ expect }) => {
-      process.env['npm_config_user_agent'] = `npm/v node/v linux`;
-      await expect(() => npm_run`  `).rejects.toThrowError();
-    });
+		test('only whitespaces', async ({ expect }) => {
+			process.env['npm_config_user_agent'] = `npm/v node/v linux`;
+			await expect(() => npm_run`  `).rejects.toThrowError();
+		});
 
-    test('with an positional option provided', async ({ expect }) => {
-      process.env['npm_config_user_agent'] = `npm/v node/v linux`;
-      await expect(() => npm_run` my-script ./out`).rejects.toThrowError();
-    });
+		test('with an positional option provided', async ({ expect }) => {
+			process.env['npm_config_user_agent'] = `npm/v node/v linux`;
+			await expect(() => npm_run` my-script ./out`).rejects.toThrowError();
+		});
 
-    test('with a flag provided', async ({ expect }) => {
-      process.env['npm_config_user_agent'] = `npm/v node/v linux`;
-      await expect(() => npm_run` my-script --verbose`).rejects.toThrowError();
-    });
+		test('with a flag provided', async ({ expect }) => {
+			process.env['npm_config_user_agent'] = `npm/v node/v linux`;
+			await expect(() => npm_run` my-script --verbose`).rejects.toThrowError();
+		});
 
-    test('with a multiple options provided', async ({ expect }) => {
-      process.env['npm_config_user_agent'] = `npm/v node/v linux`;
-      await expect(() => npm_run` my-script --out ./output --verbose`).rejects.toThrowError();
-    });
-  });
+		test('with a multiple options provided', async ({ expect }) => {
+			process.env['npm_config_user_agent'] = `npm/v node/v linux`;
+			await expect(() => npm_run` my-script --out ./output --verbose`).rejects.toThrowError();
+		});
+	});
 });

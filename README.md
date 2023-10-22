@@ -40,6 +40,7 @@ The main API of the library is based on a `PackageManager` which you simply can 
 Once you have a `PackageManager` object its API should be easily explorable via your IDE intellisense (thanks to the fact that this library comes with properly defined and documented typescript types).
 
 #### Example
+
 ```js
 const packageManager = await getPackageManager();
 
@@ -139,20 +140,20 @@ There are two methods that can be used to generate script and exec-like commands
 The function parses the provided string and generates its equivalent for the current package manager.
 
 #### Example
-```ts
- import { npm_run } from 'package-manager-manager';
 
- const myScriptRun = await npm_run` my-script -- --local`;
- console.log(myScriptRun);
- // based on what the current package manager is it prints:
- //  - `npm run my-script -- --local` for npm
- //  - `yarn my-script --local` for yarn
- //  - `pnpm my-script --local` for pnpm
- //  - `bun my-script --local` for bun
+```ts
+import { npm_run } from 'package-manager-manager';
+
+const myScriptRun = await npm_run` my-script -- --local`;
+console.log(myScriptRun);
+// based on what the current package manager is it prints:
+//  - `npm run my-script -- --local` for npm
+//  - `yarn my-script --local` for yarn
+//  - `pnpm my-script --local` for pnpm
+//  - `bun my-script --local` for bun
 ```
 
 Note: you can also provide options to the `npm_run` function in the following way: `` npm_run.with(options)`...` ``
-
 
 #### `npx`
 
@@ -161,17 +162,18 @@ Note: you can also provide options to the `npm_run` function in the following wa
 The function parses the provided string and generates its equivalent for the current package manager.
 
 #### Example
-```ts
- import { npx } from 'package-manager-manager';
 
- const myPackageCommandRun = await npx` eslint . --fix`;
- console.log(myPackageCommandRun);
- // based on what the current package manager is it prints:
- //  - `npx eslint . --fix` for npm
- //  - `yarn exec eslint . --fix` for yarn (classic)
- //  - `yarn dlx eslint . --fix` for yarn (berry)
- //  - `pnpm dlx eslint . --fix` for pnpm
- //  - `bunx eslint . --fix` for bun
+```ts
+import { npx } from 'package-manager-manager';
+
+const myPackageCommandRun = await npx` eslint . --fix`;
+console.log(myPackageCommandRun);
+// based on what the current package manager is it prints:
+//  - `npx eslint . --fix` for npm
+//  - `yarn exec eslint . --fix` for yarn (classic)
+//  - `yarn dlx eslint . --fix` for yarn (berry)
+//  - `pnpm dlx eslint . --fix` for pnpm
+//  - `bunx eslint . --fix` for bun
 ```
 
 Note: you can also provide options to the `npx` function in the following way: `` npx.with(options)`...` ``

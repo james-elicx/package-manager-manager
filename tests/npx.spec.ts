@@ -53,15 +53,15 @@ suite('npx', () => {
 		});
 	});
 
-  describe('malformed exec commands', () => {
-    test('empty', async ({ expect }) => {
-      process.env['npm_config_user_agent'] = `npm/v node/v linux`;
-      await expect(() => npx``).rejects.toThrowError();
-    });
+	describe('malformed exec commands', () => {
+		test('empty', async ({ expect }) => {
+			process.env['npm_config_user_agent'] = `npm/v node/v linux`;
+			await expect(() => npx``).rejects.toThrowError();
+		});
 
-    test('only white-spaces', async ({ expect }) => {
-      process.env['npm_config_user_agent'] = `npm/v node/v linux`;
-      await expect(() => npx`   `).rejects.toThrowError();
-    });
-  });
+		test('only white-spaces', async ({ expect }) => {
+			process.env['npm_config_user_agent'] = `npm/v node/v linux`;
+			await expect(() => npx`   `).rejects.toThrowError();
+		});
+	});
 });
