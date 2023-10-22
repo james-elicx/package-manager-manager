@@ -7,3 +7,5 @@ export type { GetRunScriptOptions } from './commands/getRunScript';
 export type { GetRunExecOptions } from './commands/getRunExec';
 
 export type { CommandScriptStruct, CommandExecStruct } from './commands/CommandStruct';
+
+export { npm_run, npx } from './shortFunctions';
