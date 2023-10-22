@@ -51,8 +51,15 @@ function getNpmRunFunction(options: NpmRunOptions = {}) {
 	};
 }
 
+/**
+ * Function to generate a script command string for the current package manager.
+ * It accepts all the same arguments that `npm run` does.
+ */
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const npm_run = getNpmRunFunction() as ReturnType<typeof getNpmRunFunction> & {
+	/**
+	 * Method used to provide some options to the `npm_run` function.
+	 */
 	with: (options: NpmRunOptions) => ReturnType<typeof getNpmRunFunction>;
 };
 

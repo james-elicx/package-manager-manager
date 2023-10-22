@@ -41,7 +41,14 @@ function getNpxFunction(options: NpxOptions = {}) {
 	};
 }
 
+/**
+ * Function to generate an exec command string for the current package manager.
+ * It accepts all the same arguments that `npx` does.
+ */
 export const npx = getNpxFunction() as ReturnType<typeof getNpxFunction> & {
+	/**
+	 * Method used to provide some options to the `npx` function.
+	 */
 	with: (options: NpxOptions) => ReturnType<typeof getNpxFunction>;
 };
 
