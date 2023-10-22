@@ -23,6 +23,8 @@ It can be used in CLIs or similar projects which may at some point need to know 
 
 ## Usage
 
+### Install
+
 To use the library first install it in your project, via:
 
 ```sh
@@ -31,8 +33,13 @@ npm i package-manager-manager
 
 (or your package manager's equivalent)
 
-Then simply import and use the `getPackageManager()` function to get an object containing all the information you need regarding the package manager currently being used:
+### PackageManager API
 
+The main API of the library is based on a `PackageManager` which you simply can get a hold of by importing and calling the `getPackageManager()` function.
+
+Once you have a `PackageManager` object its API should be easily explorable via your IDE intellisense (thanks to the fact that this library comes with properly defined and documented typescript types).
+
+#### Example
 ```js
 const packageManager = await getPackageManager();
 
@@ -43,12 +50,9 @@ console.log(packageManager.version);
 // logs the version of the package manager e.g. '8.11.0'
 ```
 
-> **Note**
-> This library comes with properly defined and documented typescript types, meaning that once you obtain the `PackageManager` object you will be able to easily see what's available on it and get all necessary details directly in your IDE
+Let's see some of the primary methods exposed by a `PackageManager` object:
 
-### API
-
-### getPackageInfo
+#### getPackageInfo
 
 `packageManager.getPackageInfo` allows you to get the information regarding a locally installed package that your client application is using, it can for example be used to make sure your user's application has a certain dependency or to gather and display the package version of such dependency.
 
@@ -66,7 +70,7 @@ if (zodPackage) {
 > **Note**
 > This method only returns the information of a **locally installed package**, or _null_ in case the package is not installed, it does not return information of packages not locally installed (the API could be extended in the future to also include such use case)
 
-### getRunScript
+#### getRunScript
 
 `packageManager.getRunScript` let's you create a command that can be used to run a script defined in the package.json file.
 
@@ -95,7 +99,7 @@ const buildCmd = packageManager.getRunScriptStruct('build', {
 spawn(buildCmd.cmd, buildCmd.cmdArgs);
 ```
 
-### getRunExec
+#### getRunExec
 
 `packageManager.getRunExec` let's you create a command that can be used to execute a command from a target package (which may or may not be locally installed).
 
@@ -123,3 +127,51 @@ const eslintCmd = packageManager.getRunExec('eslint', {
 // run the command for the user
 spawn(eslintCmd.cmd, eslintCmd.cmdArgs);
 ```
+
+### Short APIs
+
+There are two methods that can be used to generate script and exec-like commands, these are equivalent to respectively `getRunScript` and `getRunExec` but don't require you to manually create a `PackageManager` object (that is done for you under the hood) and provide an API which makes you write code that resembles closer what you'd type in your terminal.
+
+#### `npm_run`
+
+`npm_run` is used to generate a script command, you use it by providing a string literal as its value, the content should be exactly the same as what you'd type in your terminal when using **npm run**, but without the `npm` and `run` keywords.
+
+The function parses the provided string and generates its equivalent for the current package manager.
+
+#### Example
+```ts
+ import { npm_run } from 'package-manager-manager';
+
+ const myScriptRun = await npm_run` my-script -- --local`;
+ console.log(myScriptRun);
+ // based on what the current package manager is it prints:
+ //  - `npm run my-script -- --local` for npm
+ //  - `yarn my-script --local` for yarn
+ //  - `pnpm my-script --local` for pnpm
+ //  - `bun my-script --local` for bun
+```
+
+Note: you can also provide options to the `npm_run` function in the following way: `` npm_run.with(options)`...` ``
+
+
+#### `npx`
+
+`npx` is used to generate an exec-like command, you use it by providing a string literal as its value, the content should be exactly the same as what you'd type in your terminal when using **npx**, but without the `npx` keywords.
+
+The function parses the provided string and generates its equivalent for the current package manager.
+
+#### Example
+```ts
+ import { npx } from 'package-manager-manager';
+
+ const myPackageCommandRun = await npx` eslint . --fix`;
+ console.log(myPackageCommandRun);
+ // based on what the current package manager is it prints:
+ //  - `npx eslint . --fix` for npm
+ //  - `yarn exec eslint . --fix` for yarn (classic)
+ //  - `yarn dlx eslint . --fix` for yarn (berry)
+ //  - `pnpm dlx eslint . --fix` for pnpm
+ //  - `bunx eslint . --fix` for bun
+```
+
+Note: you can also provide options to the `npx` function in the following way: `` npx.with(options)`...` ``
