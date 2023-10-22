@@ -1,8 +1,13 @@
 import { parse as shellQuoteParse } from 'shell-quote';
 import type { GetRunExecOptions } from '../commands';
+import type { PackageManager } from '../packageManager';
 import { getPackageManager } from '../packageManager';
 
 type NpxOptions = Partial<Omit<GetRunExecOptions, 'args'>>;
+
+// the current package manager (we use a local variable here to cache it
+// so that it not re-created for each invocation of npx)
+let pm: PackageManager | null = null;
 
 function getNpxFunction(options: NpxOptions = {}) {
 	return async function npx(strings: TemplateStringsArray, ...values: unknown[]): Promise<string> {
@@ -16,7 +21,9 @@ function getNpxFunction(options: NpxOptions = {}) {
 			return `${accStr}___${value}___${strings[index + 1]}`;
 		}, strings[0]);
 
-		const pm = await getPackageManager();
+		if (!pm) {
+			pm = await getPackageManager();
+		}
 
 		if (!pm) {
 			throw new Error('No package manager!');

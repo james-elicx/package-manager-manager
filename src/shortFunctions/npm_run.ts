@@ -1,8 +1,13 @@
 import { parse as shellQuoteParse } from 'shell-quote';
 import type { GetRunScriptOptions } from 'src/commands';
+import type { PackageManager } from '../packageManager';
 import { getPackageManager } from '../packageManager';
 
 type NpmRunOptions = Partial<Omit<GetRunScriptOptions, 'args'>>;
+
+// the current package manager (we use a local variable here to cache it
+// so that it not re-created for each invocation of npm_run)
+let pm: PackageManager | null = null;
 
 function getNpmRunFunction(options: NpmRunOptions = {}) {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -20,7 +25,9 @@ function getNpmRunFunction(options: NpmRunOptions = {}) {
 			return `${accStr}___${value}___${strings[index + 1]}`;
 		}, strings[0]);
 
-		const pm = await getPackageManager();
+		if (!pm) {
+			pm = await getPackageManager();
+		}
 
 		if (!pm) {
 			throw new Error('No package manager!');
